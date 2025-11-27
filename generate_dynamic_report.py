@@ -143,17 +143,25 @@ def generate_dynamic_report():
                 <div id="chart-equity" style="height: 350px;"></div>
             </div>
             <div class="card">
-                <h3 class="text-lg font-semibold mb-4">Strategy Performance</h3>
-                <div id="chart-strategy" style="height: 350px;"></div>
+                <h3 class="text-lg font-semibold mb-4">Drawdown</h3>
+                <div id="chart-drawdown" style="height: 350px;"></div>
             </div>
         </div>
 
         <!-- Charts Row 2 -->
         <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-6">
             <div class="card">
+                <h3 class="text-lg font-semibold mb-4">Strategy Performance</h3>
+                <div id="chart-strategy" style="height: 350px;"></div>
+            </div>
+            <div class="card">
                 <h3 class="text-lg font-semibold mb-4">Daily P&L</h3>
                 <div id="chart-daily" style="height: 350px;"></div>
             </div>
+        </div>
+
+        <!-- Charts Row 3 -->
+        <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-6">
             <div class="card">
                 <h3 class="text-lg font-semibold mb-4">Win/Loss Distribution</h3>
                 <div id="chart-dist" style="height: 350px;"></div>
@@ -273,6 +281,7 @@ def generate_dynamic_report():
                 y: equityY,
                 type: 'scatter',
                 mode: 'lines',
+                name: 'Equity',
                 line: {{ color: '#00E396', width: 2 }},
                 fill: 'tozeroy',
                 fillcolor: 'rgba(0, 227, 150, 0.1)'
@@ -285,7 +294,32 @@ def generate_dynamic_report():
                 yaxis: {{ gridcolor: '#333' }}
             }});
 
-            // 2. Strategy Performance
+            // 2. Drawdown Chart
+            let peak = -Infinity;
+            const drawdownY = equityY.map(val => {{
+                if (val > peak) peak = val;
+                return val - peak;
+            }});
+
+            Plotly.newPlot('chart-drawdown', [{{
+                x: equityX,
+                y: drawdownY,
+                type: 'scatter',
+                mode: 'lines',
+                name: 'Drawdown',
+                line: {{ color: '#FF4560', width: 1 }},
+                fill: 'tozeroy',
+                fillcolor: 'rgba(255, 69, 96, 0.2)'
+            }}], {{
+                paper_bgcolor: 'rgba(0,0,0,0)',
+                plot_bgcolor: 'rgba(0,0,0,0)',
+                font: {{ color: '#888' }},
+                margin: {{ t: 10, l: 40, r: 10, b: 40 }},
+                xaxis: {{ gridcolor: '#333' }},
+                yaxis: {{ gridcolor: '#333' }}
+            }});
+
+            // 3. Strategy Performance
             const strategies = {{}};
             exits.forEach(t => {{
                 const s = t.strategy || 'Unknown';
@@ -310,7 +344,7 @@ def generate_dynamic_report():
                 yaxis: {{ gridcolor: '#333' }}
             }});
 
-            // 3. Daily P&L (Only relevant for "All Time" really, but can show hourly for single day if needed)
+            // 4. Daily P&L (Only relevant for "All Time" really, but can show hourly for single day if needed)
             // For simplicity, we'll keep it as Daily P&L for now, or maybe Trade P&L for single day
             const isSingleDay = document.getElementById('dateSelector').value !== 'all';
             

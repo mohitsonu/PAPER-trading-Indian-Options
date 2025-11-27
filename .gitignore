@@ -1,0 +1,150 @@
+# ========================================
+# SENSITIVE DATA - NEVER COMMIT!
+# ========================================
+
+# Environment variables (contains API keys, passwords, TOTP)
+.env
+
+# Capital and trading data
+capital_persistence.json
+daily_capital_tracking.csv
+
+# Trade history (contains real trading data)
+high_accuracy_trades_*.csv
+high_accuracy_updates_*.json
+simplified_trades_*.csv
+current_trades_*.csv
+
+# Trade state files
+trade_state_*.json
+
+# Session reports
+trading_report*.html
+
+# ========================================
+# PYTHON
+# ========================================
+
+# Byte-compiled / optimized / DLL files
+__pycache__/
+*.py[cod]
+*$py.class
+
+# Virtual Environment
+.venv/
+venv/
+ENV/
+env/
+
+# Distribution / packaging
+.Python
+build/
+develop-eggs/
+dist/
+downloads/
+eggs/
+.eggs/
+lib/
+lib64/
+parts/
+sdist/
+var/
+wheels/
+*.egg-info/
+.installed.cfg
+*.egg
+
+# PyInstaller
+*.manifest
+*.spec
+
+# Unit test / coverage reports
+htmlcov/
+.tox/
+.coverage
+.coverage.*
+.cache
+nosetests.xml
+coverage.xml
+*.cover
+.hypothesis/
+.pytest_cache/
+
+# Jupyter Notebook
+.ipynb_checkpoints
+
+# pyenv
+.python-version
+
+# ========================================
+# IDE / EDITOR
+# ========================================
+
+# VSCode
+.vscode/
+*.code-workspace
+
+# PyCharm
+.idea/
+*.iml
+
+# Sublime Text
+*.sublime-project
+*.sublime-workspace
+
+# ========================================
+# LOGS AND TEMPORARY FILES
+# ========================================
+
+# Log files
+*.log
+logs/
+
+# Temporary files
+*.tmp
+*.temp
+*.swp
+*.swo
+*~
+
+# OS generated files
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
+Thumbs.db
+desktop.ini
+
+# ========================================
+# BACKUP FILES
+# ========================================
+
+# Backup files
+*_BACKUP_*.py
+*.bak
+*.backup
+
+# ========================================
+# DOCUMENTATION (Optional - keep if you want)
+# ========================================
+
+# Analysis documents (uncomment if you don't want to share)
+# *_ANALYSIS.md
+# *_SUMMARY.md
+# WHY_*.md
+# NOV*_*.md
+
+# ========================================
+# OPTIONAL - Uncomment if needed
+# ========================================
+
+# Config files with sensitive data (if any)
+# config.json
+# settings.json
+
+# Database files (if you add any)
+# *.db
+# *.sqlite
+# *.sqlite3

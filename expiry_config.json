@@ -1,0 +1,37 @@
+{
+  "current_expiry": "02DEC25",
+  "next_expiry": "09DEC25",
+  "expiry_dates": {
+    "november_2025": [
+      "25NOV25",
+      "28NOV25"
+    ],
+    "december_2025": [
+      "02DEC25",
+      "09DEC25",
+      "16DEC25",
+      "19DEC25",
+      "23DEC25",
+      "26DEC25",
+      "30DEC25"
+    ],
+    "january_2026": [
+      "02JAN26",
+      "06JAN26",
+      "09JAN26",
+      "13JAN26",
+      "16JAN26",
+      "20JAN26",
+      "23JAN26",
+      "27JAN26",
+      "30JAN26"
+    ]
+  },
+  "auto_update": true,
+  "notes": {
+    "format": "DDMMMYY (e.g., 25NOV25)",
+    "nifty_expiry": "Every Monday",
+    "monthly_expiry": "Last Thursday of month",
+    "how_to_update": "Change 'current_expiry' to the next expiry date"
+  }
+}

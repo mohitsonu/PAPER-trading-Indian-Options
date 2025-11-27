@@ -1,0 +1,208 @@
+{
+  "high_accuracy_parameters": {
+    "initial_capital": 100000,
+    "broker_charges_per_trade": 20,
+    "max_risk_per_trade": 0.03,
+    "max_positions": 2,
+    "min_accuracy_score": 90,
+    "target_trades_per_day": "1-10"
+  },
+  "relaxed_entry_criteria": {
+    "min_premium": 15,
+    "max_premium": 500,
+    "min_oi": 100000,
+    "min_volume": 500,
+    "max_bid_ask_spread": 8,
+    "min_trend_strength": 0.6,
+    "min_market_confidence": 60
+  },
+  "risk_management": {
+    "stop_loss_pct": 0.25,
+    "target_profit_pct": 0.50,
+    "max_holding_hours": 2,
+    "max_capital_per_trade": 0.5,
+    "trailing_stop_threshold": 0.15,
+    "trailing_stop_pct": 0.05,
+    "quick_profit_threshold": 0.20,
+    "breakeven_stop_threshold": 0.05
+  },
+  "market_analysis": {
+    "trend_confirmation_periods": 10,
+    "price_history_length": 20,
+    "cycle_interval_minutes": 2,
+    "opportunity_check_interval_minutes": 15,
+    "strikes_range": [
+      25200,
+      25250,
+      25300,
+      25350,
+      25400,
+      25450,
+      25500,
+      25550,
+      25600,
+      25650,
+      25700,
+      25750,
+      25800,
+      25850,
+      25900,
+      25950,
+      26000,
+      26050,
+      26100,
+      26150,
+      26200,
+      26250,
+      26300,
+      26350,
+      26400,
+      26450,
+      26500,
+      26550,
+      26600,
+      26650,
+      26700,
+      26750,
+      26800,
+      26850,
+      26900,
+      26950,
+      27000
+    ],
+    "expiry": "04NOV25"
+  },
+  "scoring_weights": {
+    "liquidity_score_max": 25,
+    "premium_quality_max": 20,
+    "trend_alignment_max": 25,
+    "strike_selection_max": 15,
+    "market_structure_max": 10,
+    "multi_timeframe_technical_max": 85,
+    "candlestick_patterns_max": 15,
+    "atr_volatility_max": 5,
+    "volume_profile_max": 5
+  },
+  "new_indicators": {
+    "atr": {
+      "enabled": true,
+      "period": 14,
+      "description": "Dynamic stop loss sizing based on volatility",
+      "low_volatility_threshold": 30,
+      "high_volatility_threshold": 60,
+      "stop_loss_adjustments": {
+        "low": 0.15,
+        "medium": 0.25,
+        "high": 0.35
+      }
+    },
+    "volume_profile": {
+      "enabled": true,
+      "description": "Volume confirmation for entries",
+      "thresholds": {
+        "very_high": 100000,
+        "high": 50000,
+        "good": 10000,
+        "medium": 5000,
+        "low": 1000
+      },
+      "scalper_minimum": 50000,
+      "breakout_minimum": 100000
+    }
+  },
+  "multi_timeframe_analysis": {
+    "1min_bars": "Precise entry timing",
+    "5min_bars": "Main analysis (current system)",
+    "15min_bars": "Major trend filter",
+    "scoring_breakdown": {
+      "15min_trend_filter": 30,
+      "5min_main_analysis": 40,
+      "1min_timing": 15
+    }
+  },
+  "penalties": {
+    "low_volume_penalty": 10,
+    "wide_spread_penalty": 5,
+    "extreme_move_penalty": 5
+  },
+  "strategies": {
+    "contrarian": {
+      "enabled": true,
+      "description": "Primary strategy - proven winner",
+      "win_rate": 57.9,
+      "total_pnl": 21947,
+      "allocation": 60
+    },
+    "scalper": {
+      "enabled": true,
+      "description": "Quick 5-15 min trades with tight stops",
+      "min_premium": 15,
+      "max_premium": 40,
+      "hold_time_min": 5,
+      "hold_time_max": 15,
+      "target_pct": 0.20,
+      "stop_loss_pct": 0.10,
+      "time_window": "10:00-14:00",
+      "win_rate": 100,
+      "allocation": 20
+    },
+    "trend_rider": {
+      "enabled": true,
+      "description": "Ride strong trends with cheap premiums",
+      "min_premium": 20,
+      "max_premium": 40,
+      "min_trend_strength": 0.7,
+      "hold_time_min": 60,
+      "hold_time_max": 120,
+      "target_pct": 0.60,
+      "stop_loss_pct": 0.25,
+      "trailing_stop_enabled": true,
+      "trailing_stop_trigger": 0.20,
+      "win_rate": 100,
+      "allocation": 15
+    },
+    "support_resistance_bounce": {
+      "enabled": true,
+      "description": "Trade bounces at key levels",
+      "round_numbers": [25500, 25600, 25700, 25800, 25900, 26000],
+      "proximity_points": 20,
+      "min_premium": 15,
+      "max_premium": 50,
+      "hold_time_min": 30,
+      "hold_time_max": 60,
+      "target_pct": 0.45,
+      "stop_loss_pct": 0.20,
+      "win_rate": 100,
+      "allocation": 5
+    },
+    "momentum_breakout": {
+      "enabled": false,
+      "description": "Catch explosive breakout moves",
+      "rsi_ce_threshold": 70,
+      "rsi_pe_threshold": 30,
+      "macd_crossover_required": true,
+      "hold_time_min": 10,
+      "hold_time_max": 30,
+      "target_pct": 0.35,
+      "stop_loss_pct": 0.15,
+      "win_rate": 100,
+      "allocation": 0
+    },
+    "trend_following": {
+      "enabled": false,
+      "strong_trend_threshold": 0.7,
+      "otm_range": 100
+    },
+    "range_trading": {
+      "enabled": false,
+      "atm_range": 50,
+      "min_iv_rank": 30
+    }
+  },
+  "quality_metrics": {
+    "target_win_rate": 70,
+    "min_profit_factor": 2.0,
+    "max_trades_per_session": 10,
+    "min_score_for_90_plus": 90
+  }
+}

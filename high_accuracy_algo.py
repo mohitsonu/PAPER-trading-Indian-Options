@@ -2271,12 +2271,12 @@ class HighAccuracyAlgo:
             print(f"   💤 Sitting out for rest of day")
             return []
         
-        # 🚨 TIME-BASED FILTER: No trading after 2:30 PM (risky end-of-day volatility)
+        # 🚨 TIME-BASED FILTER: Smart afternoon trading control
         current_time = datetime.now()
         current_hour = current_time.hour
         current_minute = current_time.minute
         
-        # Block trading after 2:30 PM (14:30)
+        # STRICT: No trading after 2:30 PM (14:30) - too close to market close
         if current_hour > 14 or (current_hour == 14 and current_minute >= 30):
             print(f"⏰ No trading after 2:30 PM (Current: {current_hour}:{current_minute:02d})")
             print(f"   Reason: High reversal risk in final hour")
@@ -2316,6 +2316,27 @@ class HighAccuracyAlgo:
                 print(f"   Reason: {market_condition['reason']}")
                 print(f"   💤 Sitting out - Ranging market not suitable")
                 return []
+            
+            # 🚨 AFTERNOON TRADING FILTER (2:00 PM - 2:30 PM)
+            # After 2 PM, only trade if market is STRONGLY trending
+            if current_hour >= 14 and current_minute >= 0:
+                # Check if market is strongly trending
+                is_strong_trend = (
+                    market_condition['condition'] in ['STRONG_UPTREND', 'STRONG_DOWNTREND'] and
+                    market_condition['score'] >= 75
+                )
+                
+                if not is_strong_trend:
+                    print(f"🚫 AFTERNOON TRADING BLOCKED (After 2:00 PM)")
+                    print(f"   Current Time: {current_hour}:{current_minute:02d}")
+                    print(f"   Market: {market_condition['condition']} (Score: {market_condition['score']:.0f})")
+                    print(f"   Reason: Only strong trends allowed after 2 PM")
+                    print(f"   💤 Sitting out - Afternoon session too risky")
+                    return []
+                else:
+                    print(f"✅ AFTERNOON TRADING ALLOWED")
+                    print(f"   Market: {market_condition['condition']} (Score: {market_condition['score']:.0f})")
+                    print(f"   Reason: Strong trend detected - Safe to trade")
             
             # Also check if market is too volatile (high risk)
             if market_condition['condition'] == 'VOLATILE' and market_condition['score'] < 50:

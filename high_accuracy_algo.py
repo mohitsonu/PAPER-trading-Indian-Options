@@ -27,6 +27,7 @@ except ImportError:
     print("⚠️ Telegram module not found - signals disabled")
 
 # Priority Features (Market Condition, OI Analysis, Stochastic, Greeks)
+# Priority Features (Market Condition, OI Analysis, Stochastic, Greeks)
 try:
     from priority_features import PriorityFeatures
     PRIORITY_FEATURES_AVAILABLE = True
@@ -55,6 +56,14 @@ from trade_state_persistence import TradeStatePersistence
 
 # Realistic brokerage calculator
 from brokerage_calculator import BrokerageCalculator, calculate_tax_on_profit
+
+# Dynamic Report Generator
+try:
+    import generate_dynamic_report
+    DYNAMIC_REPORT_AVAILABLE = True
+except ImportError:
+    DYNAMIC_REPORT_AVAILABLE = False
+    print("⚠️ Dynamic report generator not found")
 
 load_dotenv()
 
@@ -2699,6 +2708,21 @@ class HighAccuracyAlgo:
         
         print(f"💰 Capital after trade: ₹{self.current_capital:.2f} (Deducted: ₹{total_cost:.2f})")
         
+        # 🐛 FIX: Add ENTRY to trade_history for strike diversity filter
+        entry_record = {
+            'action': 'ENTRY',
+            'trade_id': position['trade_id'],
+            'symbol': position['symbol'],
+            'strike': position['strike'],
+            'option_type': position['option_type'],
+            'entry_price': position['entry_price'],
+            'quantity': position['quantity'],
+            'entry_time': position['entry_time'],
+            'strategy': position['strategy'],
+            'accuracy_score': position['accuracy_score']
+        }
+        self.trade_history.append(entry_record)
+        
         # Log trade
         self.log_high_accuracy_trade(position, 'ENTRY')
         self.update_json_file()
@@ -3141,6 +3165,15 @@ class HighAccuracyAlgo:
                 ]
             
             writer.writerow(row)
+        
+    # 🔄 AUTO-GENERATE DYNAMIC REPORT
+    if DYNAMIC_REPORT_AVAILABLE:
+        try:
+            print("📊 Updating dynamic dashboard...")
+            generate_dynamic_report.generate_dynamic_report()
+            print("✅ Dashboard updated")
+        except Exception as e:
+            print(f"⚠️ Dashboard update failed: {e}")
     
     def update_json_file(self):
         """Update JSON with high accuracy metrics"""

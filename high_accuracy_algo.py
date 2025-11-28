@@ -3789,6 +3789,24 @@ class HighAccuracyAlgo:
                 losing_trades = len(self.trade_history) - winning_trades
                 win_rate = (winning_trades / len(self.trade_history)) * 100
                 
+                total_gross_pnl = sum([t.get('gross_pnl', 0) for t in self.trade_history])
+                total_charges = sum([t.get('total_charges', 0) for t in self.trade_history])
+                avg_score = sum([t.get('accuracy_score', 0) for t in self.trade_history]) / len(self.trade_history)
+                avg_holding = sum([t.get('holding_minutes', 0) for t in self.trade_history]) / len(self.trade_history)
+                
+                avg_win = 0
+                avg_loss = 0
+                if winning_trades > 0:
+                    avg_win = sum([t.get('net_pnl', 0) for t in self.trade_history if t.get('net_pnl', 0) > 0]) / winning_trades
+                if losing_trades > 0:
+                    avg_loss = sum([t.get('net_pnl', 0) for t in self.trade_history if t.get('net_pnl', 0) < 0]) / losing_trades
+                
+                profit_factor = abs(total_gross_pnl / total_charges) if total_charges > 0 else 0
+                high_score_trades = len([t for t in self.trade_history if t.get('accuracy_score', 0) >= 90])
+                successful_high_score = len([t for t in self.trade_history 
+                                           if t.get('accuracy_score', 0) >= 90 and t.get('net_pnl', 0) > 0])
+                high_score_success = (successful_high_score / high_score_trades * 100) if high_score_trades > 0 else 0
+                
                 self.telegram.send_daily_summary({
                     'starting_capital': self.initial_capital,
                     'ending_capital': self.current_capital,
@@ -3797,7 +3815,18 @@ class HighAccuracyAlgo:
                     'total_trades': len(self.trade_history),
                     'win_rate': win_rate,
                     'wins': winning_trades,
-                    'losses': losing_trades
+                    'losses': losing_trades,
+                    'gross_pnl': total_gross_pnl,
+                    'total_charges': total_charges,
+                    'avg_score': avg_score,
+                    'avg_holding': avg_holding,
+                    'avg_win': avg_win,
+                    'avg_loss': avg_loss,
+                    'profit_factor': profit_factor,
+                    'high_score_trades': high_score_trades,
+                    'high_score_success': high_score_success,
+                    'csv_file': self.csv_file,
+                    'json_file': self.json_file
                 })
                 print("📱 Telegram daily summary sent")
             except Exception as e:

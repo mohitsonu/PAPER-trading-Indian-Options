@@ -431,6 +431,15 @@ def generate_dynamic_report():
         f.write(html_content)
         
     print(f"\n✅ Dynamic report generated: {output_file}")
+    
+    # Auto-open in browser (optional - can be disabled)
+    try:
+        import webbrowser
+        abs_path = os.path.abspath(output_file)
+        print(f"🌐 Opening report in browser...")
+        webbrowser.open(f"file:///{abs_path}")
+    except Exception as e:
+        print(f"💡 Open manually: {output_file}")
 
 if __name__ == "__main__":
     generate_dynamic_report()

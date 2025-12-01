@@ -203,6 +203,14 @@ class HighAccuracyAlgo:
         
         self.initialize_files()
     
+    def get_completed_trades(self):
+        """Get only completed trades (EXIT records), not ENTRY records"""
+        return [t for t in self.trade_history if t.get('action') == 'EXIT']
+    
+    def get_completed_trade_count(self):
+        """Get count of completed trades only"""
+        return len(self.get_completed_trades())
+    
     def initialize_files(self):
         """Initialize CSV and JSON files for high accuracy tracking"""
         
@@ -3212,19 +3220,20 @@ class HighAccuracyAlgo:
         except:
             pass
         
-        # Calculate performance metrics
-        total_trades = len(self.trade_history)
-        winning_trades = len([t for t in self.trade_history if t.get('net_pnl', 0) > 0])
+        # Calculate performance metrics (only completed trades)
+        completed_trades = self.get_completed_trades()
+        total_trades = len(completed_trades)
+        winning_trades = len([t for t in completed_trades if t.get('net_pnl', 0) > 0])
         losing_trades = total_trades - winning_trades
         
-        total_gross_pnl = sum([t.get('gross_pnl', 0) for t in self.trade_history])
-        total_charges = sum([t.get('total_charges', 0) for t in self.trade_history])
-        total_net_pnl = sum([t.get('net_pnl', 0) for t in self.trade_history])
+        total_gross_pnl = sum([t.get('gross_pnl', 0) for t in completed_trades])
+        total_charges = sum([t.get('total_charges', 0) for t in completed_trades])
+        total_net_pnl = sum([t.get('net_pnl', 0) for t in completed_trades])
         
         win_rate = (winning_trades / total_trades * 100) if total_trades > 0 else 0
         
-        avg_accuracy_score = sum([t.get('accuracy_score', 0) for t in self.trade_history]) / total_trades if total_trades > 0 else 0
-        avg_holding_time = sum([t.get('holding_minutes', 0) for t in self.trade_history]) / total_trades if total_trades > 0 else 0
+        avg_accuracy_score = sum([t.get('accuracy_score', 0) for t in completed_trades]) / total_trades if total_trades > 0 else 0
+        avg_holding_time = sum([t.get('holding_minutes', 0) for t in completed_trades]) / total_trades if total_trades > 0 else 0
         
         data = {
             'start_time': existing_start_time,  # Preserve original start time
@@ -3488,15 +3497,16 @@ class HighAccuracyAlgo:
         """Display compact trading status below option chain"""
         
         net_pnl = self.current_capital - self.initial_capital
-        total_charges = len(self.trade_history) * self.broker_charges * 2
+        completed_trades = self.get_completed_trades()
+        total_charges = len(completed_trades) * self.broker_charges * 2
         
         print(f"💰 CAPITAL: ₹{self.current_capital:,.0f} | P&L: ₹{net_pnl:+,.0f} ({(net_pnl / self.initial_capital * 100):+.1f}%) | CHARGES: ₹{total_charges:.0f}")
-        print(f"🎯 POSITIONS: {len(self.positions)}/{self.max_positions} | TRADES: {len(self.trade_history)}", end="")
+        print(f"🎯 POSITIONS: {len(self.positions)}/{self.max_positions} | TRADES: {len(completed_trades)}", end="")
         
-        if self.trade_history:
-            winning_trades = len([t for t in self.trade_history if t.get('net_pnl', 0) > 0])
-            win_rate = (winning_trades / len(self.trade_history)) * 100
-            avg_score = sum([t.get('accuracy_score', 0) for t in self.trade_history]) / len(self.trade_history)
+        if completed_trades:
+            winning_trades = len([t for t in completed_trades if t.get('net_pnl', 0) > 0])
+            win_rate = (winning_trades / len(completed_trades)) * 100
+            avg_score = sum([t.get('accuracy_score', 0) for t in completed_trades]) / len(completed_trades)
             print(f" | WIN RATE: {win_rate:.0f}% | AVG SCORE: {avg_score:.0f}/100")
         else:
             print("")
@@ -3724,19 +3734,21 @@ class HighAccuracyAlgo:
         print(f"💰 Starting Capital: ₹{self.initial_capital:,}")
         print(f"💰 Ending Capital: ₹{self.current_capital:,.2f}")
         print(f"📊 Net P&L: ₹{net_pnl:+,.2f} ({net_pnl_pct:+.2f}%)")
-        print(f"📋 Total Trades: {len(self.trade_history)}")
         
-        if self.trade_history:
+        completed_trades = self.get_completed_trades()
+        print(f"📋 Total Trades: {len(completed_trades)}")
+        
+        if completed_trades:
             # Detailed statistics
-            winning_trades = len([t for t in self.trade_history if t.get('net_pnl', 0) > 0])
-            losing_trades = len(self.trade_history) - winning_trades
-            win_rate = (winning_trades / len(self.trade_history)) * 100
+            winning_trades = len([t for t in completed_trades if t.get('net_pnl', 0) > 0])
+            losing_trades = len(completed_trades) - winning_trades
+            win_rate = (winning_trades / len(completed_trades)) * 100
             
-            total_gross_pnl = sum([t.get('gross_pnl', 0) for t in self.trade_history])
-            total_charges = sum([t.get('total_charges', 0) for t in self.trade_history])
+            total_gross_pnl = sum([t.get('gross_pnl', 0) for t in completed_trades])
+            total_charges = sum([t.get('total_charges', 0) for t in completed_trades])
             
-            avg_score = sum([t.get('accuracy_score', 0) for t in self.trade_history]) / len(self.trade_history)
-            avg_holding = sum([t.get('holding_minutes', 0) for t in self.trade_history]) / len(self.trade_history)
+            avg_score = sum([t.get('accuracy_score', 0) for t in completed_trades]) / len(completed_trades)
+            avg_holding = sum([t.get('holding_minutes', 0) for t in completed_trades]) / len(completed_trades)
             
             print(f"\n📈 PERFORMANCE METRICS:")
             print(f"🎯 Win Rate: {win_rate:.1f}% ({winning_trades}W / {losing_trades}L)")
@@ -3755,11 +3767,11 @@ class HighAccuracyAlgo:
                 print(f"📉 Average Loss: ₹{avg_loss:.2f}")
             
             # Trade quality analysis
-            high_score_trades = len([t for t in self.trade_history if t.get('accuracy_score', 0) >= 90])
+            high_score_trades = len([t for t in completed_trades if t.get('accuracy_score', 0) >= 90])
             print(f"\n🏆 QUALITY ANALYSIS:")
-            print(f"⭐ High Score Trades (90+): {high_score_trades}/{len(self.trade_history)}")
+            print(f"⭐ High Score Trades (90+): {high_score_trades}/{len(completed_trades)}")
             
-            successful_high_score = len([t for t in self.trade_history 
+            successful_high_score = len([t for t in completed_trades 
                                        if t.get('accuracy_score', 0) >= 90 and t.get('net_pnl', 0) > 0])
             if high_score_trades > 0:
                 high_score_success_rate = (successful_high_score / high_score_trades) * 100
@@ -3770,12 +3782,12 @@ class HighAccuracyAlgo:
         print(f"   📋 JSON Updates: {self.json_file}")
         
         print(f"\n💡 ALGORITHM VALIDATION:")
-        if len(self.trade_history) == 0:
+        if len(completed_trades) == 0:
             print("✅ No trades taken - algorithm waited for high accuracy setups")
             print("💡 This shows excellent risk management and patience")
-        elif len(self.trade_history) <= 10 and win_rate >= 70:
+        elif len(completed_trades) <= 10 and win_rate >= 70:
             print("✅ Quality over quantity achieved!")
-        elif len(self.trade_history) > 10:
+        elif len(completed_trades) > 10:
             print("⚠️ Too many trades - consider raising minimum score")
         elif win_rate < 60:
             print("⚠️ Win rate below target - review entry criteria")
@@ -3783,27 +3795,27 @@ class HighAccuracyAlgo:
             print("✅ Performance within acceptable range")
         
         # Send daily summary to Telegram
-        if self.telegram and self.trade_history:
+        if self.telegram and completed_trades:
             try:
-                winning_trades = len([t for t in self.trade_history if t.get('net_pnl', 0) > 0])
-                losing_trades = len(self.trade_history) - winning_trades
-                win_rate = (winning_trades / len(self.trade_history)) * 100
+                winning_trades = len([t for t in completed_trades if t.get('net_pnl', 0) > 0])
+                losing_trades = len(completed_trades) - winning_trades
+                win_rate = (winning_trades / len(completed_trades)) * 100
                 
-                total_gross_pnl = sum([t.get('gross_pnl', 0) for t in self.trade_history])
-                total_charges = sum([t.get('total_charges', 0) for t in self.trade_history])
-                avg_score = sum([t.get('accuracy_score', 0) for t in self.trade_history]) / len(self.trade_history)
-                avg_holding = sum([t.get('holding_minutes', 0) for t in self.trade_history]) / len(self.trade_history)
+                total_gross_pnl = sum([t.get('gross_pnl', 0) for t in completed_trades])
+                total_charges = sum([t.get('total_charges', 0) for t in completed_trades])
+                avg_score = sum([t.get('accuracy_score', 0) for t in completed_trades]) / len(completed_trades)
+                avg_holding = sum([t.get('holding_minutes', 0) for t in completed_trades]) / len(completed_trades)
                 
                 avg_win = 0
                 avg_loss = 0
                 if winning_trades > 0:
-                    avg_win = sum([t.get('net_pnl', 0) for t in self.trade_history if t.get('net_pnl', 0) > 0]) / winning_trades
+                    avg_win = sum([t.get('net_pnl', 0) for t in completed_trades if t.get('net_pnl', 0) > 0]) / winning_trades
                 if losing_trades > 0:
-                    avg_loss = sum([t.get('net_pnl', 0) for t in self.trade_history if t.get('net_pnl', 0) < 0]) / losing_trades
+                    avg_loss = sum([t.get('net_pnl', 0) for t in completed_trades if t.get('net_pnl', 0) < 0]) / losing_trades
                 
                 profit_factor = abs(total_gross_pnl / total_charges) if total_charges > 0 else 0
-                high_score_trades = len([t for t in self.trade_history if t.get('accuracy_score', 0) >= 90])
-                successful_high_score = len([t for t in self.trade_history 
+                high_score_trades = len([t for t in completed_trades if t.get('accuracy_score', 0) >= 90])
+                successful_high_score = len([t for t in completed_trades 
                                            if t.get('accuracy_score', 0) >= 90 and t.get('net_pnl', 0) > 0])
                 high_score_success = (successful_high_score / high_score_trades * 100) if high_score_trades > 0 else 0
                 
@@ -3812,7 +3824,7 @@ class HighAccuracyAlgo:
                     'ending_capital': self.current_capital,
                     'net_pnl': net_pnl,
                     'net_pnl_pct': net_pnl_pct,
-                    'total_trades': len(self.trade_history),
+                    'total_trades': len(completed_trades),
                     'win_rate': win_rate,
                     'wins': winning_trades,
                     'losses': losing_trades,

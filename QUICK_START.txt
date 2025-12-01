@@ -1,0 +1,71 @@
+╔════════════════════════════════════════════════════════════╗
+║         🚀 TRADING REPORT - QUICK START GUIDE             ║
+╚════════════════════════════════════════════════════════════╝
+
+✅ AUTOMATIC MODE (Recommended)
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+Run your trading bot:
+    python run_high_accuracy.py
+
+After trading ends (3:30 PM):
+    ✓ Report auto-generates
+    ✓ Browser auto-opens
+    ✓ Done!
+
+
+📊 MANUAL METHODS
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+Update & View Report:
+    Double-click: update_report.bat
+    OR run: python generate_dynamic_report.py
+
+Just View Report:
+    Double-click: view_report.bat
+    OR run: python open_report.py
+
+
+🎯 WHAT YOU GET
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+✓ Equity Curve
+✓ Strategy Performance
+✓ Daily P&L
+✓ Win/Loss Distribution
+✓ Trade Log (last 50 trades)
+✓ Date Filter (view any day)
+
+
+💡 TIPS
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+• Report updates automatically after each trading session
+• No manual work needed!
+• View anytime by opening trading_report.html
+• Use date dropdown to filter specific days
+
+
+📁 KEY FILES
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+trading_report.html         → Your dashboard (open this)
+update_report.bat           → Manual update (double-click)
+view_report.bat             → Just view (double-click)
+generate_dynamic_report.py  → Report generator script
+
+
+🆘 HELP
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+Report not updating?
+    → Run: python generate_dynamic_report.py
+
+Need more info?
+    → Read: AUTOMATIC_REPORT_SETUP.md
+    → Read: HOW_TO_UPDATE_REPORT.md
+
+
+╔════════════════════════════════════════════════════════════╗
+║  That's it! Your report updates automatically! 🎉         ║
+╚════════════════════════════════════════════════════════════╝

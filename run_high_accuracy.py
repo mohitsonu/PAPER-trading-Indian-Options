@@ -81,6 +81,25 @@ def main():
     
     print(f"\n📊 Session completed. Check results with:")
     print(f"   python view_high_accuracy_results.py")
+    
+    # 🎯 AUTO-GENERATE TRADING REPORT
+    print(f"\n🔄 Auto-generating trading report...")
+    try:
+        import subprocess
+        result = subprocess.run(
+            ["python", "generate_dynamic_report.py"],
+            capture_output=True,
+            text=True,
+            timeout=30
+        )
+        if result.returncode == 0:
+            print(f"✅ Trading report updated successfully!")
+            print(f"📊 Open 'trading_report.html' to view your performance")
+        else:
+            print(f"⚠️ Report generation had issues: {result.stderr}")
+    except Exception as e:
+        print(f"⚠️ Could not auto-generate report: {e}")
+        print(f"💡 Run manually: python generate_dynamic_report.py")
 
 if __name__ == "__main__":
     main()

@@ -1,0 +1,98 @@
+================================================================================
+🎯 HIGH ACCURACY TRADING ALGORITHM - START HERE
+================================================================================
+
+✅ SIMPLIFIED STRATEGY NOW INTEGRATED!
+
+You can now choose between two strategies:
+1. CURRENT (Complex, Min Score 90) - Conservative
+2. SIMPLIFIED (Price Action, Min Score 70) - Aggressive
+
+================================================================================
+🚀 HOW TO START TRADING
+================================================================================
+
+STEP 1: Update Expiry (if needed)
+   Open: expiry_config.json
+   Change: "current_expiry": "09DEC25"
+
+STEP 2: Run the Algorithm
+   Command: python run_high_accuracy.py
+   Or double-click: run_high_accuracy_unbuffered.bat
+
+STEP 3: Choose Strategy
+   Enter 1 for CURRENT (recommended for beginners)
+   Enter 2 for SIMPLIFIED (more trades)
+
+STEP 4: Let It Trade
+   Algorithm runs automatically until 3:30 PM
+   Check Telegram for notifications
+   Monitor terminal for live updates
+
+STEP 5: View Results
+   Command: python view_high_accuracy_results.py
+
+================================================================================
+📊 STRATEGY COMPARISON
+================================================================================
+
+CURRENT (Option 1):
+   ✅ Min Score: 90/100
+   ✅ Fewer trades, higher quality
+   ✅ 12 indicators
+   ✅ Conservative approach
+   ✅ Best for: Accuracy over quantity
+
+SIMPLIFIED (Option 2):
+   ✅ Min Score: 70/100
+   ✅ More trades, price action focused
+   ✅ 6 components
+   ✅ Aggressive approach
+   ✅ Best for: More opportunities
+
+================================================================================
+⚠️ IMPORTANT
+================================================================================
+
+✅ Run ONE strategy at a time (no rate limits)
+✅ Don't run multiple instances
+✅ Market hours: 9:15 AM - 3:30 PM
+✅ Capital: ₹1,00,000 (persists across sessions)
+
+================================================================================
+🔧 USEFUL COMMANDS
+================================================================================
+
+Start Trading:
+   python run_high_accuracy.py
+
+Check Expiry:
+   python check_expiry.py
+
+View Results:
+   python view_high_accuracy_results.py
+
+Generate Report:
+   python generate_dynamic_report.py
+
+View Capital:
+   python view_capital.py
+
+================================================================================
+📖 DOCUMENTATION
+================================================================================
+
+Full Guide: README_FINAL.md
+Integration Details: INTEGRATION_COMPLETE.md
+API Rate Limits: IMPORTANT_READ_THIS.md
+Recent Fixes: FIXES_APPLIED_DEC03.md
+
+================================================================================
+✅ READY TO TRADE!
+================================================================================
+
+Just run: python run_high_accuracy.py
+
+Choose your strategy and let it trade! 🎉
+
+================================================================================

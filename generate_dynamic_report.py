@@ -1,6 +1,7 @@
 #!/usr/bin/env python3
+# -*- coding: utf-8 -*-
 """
-📊 DYNAMIC TRADING REPORT GENERATOR
+DYNAMIC TRADING REPORT GENERATOR
 Generates a single HTML file with embedded data and JavaScript for interactive filtering.
 """
 
@@ -9,9 +10,16 @@ import glob
 import json
 from datetime import datetime
 import os
+import sys
+
+# Fix Windows console encoding issues
+if sys.platform == 'win32':
+    import io
+    sys.stdout = io.TextIOWrapper(sys.stdout.buffer, encoding='utf-8', errors='replace')
+    sys.stderr = io.TextIOWrapper(sys.stderr.buffer, encoding='utf-8', errors='replace')
 
 def generate_dynamic_report():
-    print("🚀 GENERATING DYNAMIC TRADING REPORT")
+    print("GENERATING DYNAMIC TRADING REPORT")
     print("=" * 60)
 
     # 1. Load Data
@@ -19,12 +27,12 @@ def generate_dynamic_report():
     csv_files.sort()
     
     if not csv_files:
-        print("❌ No trade files found!")
+        print("ERROR: No trade files found!")
         return
 
     all_trades = []
     
-    print(f"📂 Found {len(csv_files)} daily files")
+    print(f"Found {len(csv_files)} daily files")
     
     for file in csv_files:
         try:
@@ -65,13 +73,13 @@ def generate_dynamic_report():
             all_trades.extend(records)
             
         except Exception as e:
-            print(f"⚠️ Error reading {file}: {e}")
+            print(f"WARNING: Error reading {file}: {e}")
 
     if not all_trades:
-        print("❌ No valid trades found.")
+        print("ERROR: No valid trades found.")
         return
 
-    print(f"✅ Loaded {len(all_trades)} total trade records")
+    print(f"SUCCESS: Loaded {len(all_trades)} total trade records")
 
     # 2. Prepare JSON Data
     trades_json = json.dumps(all_trades)
@@ -430,16 +438,16 @@ def generate_dynamic_report():
     with open(output_file, "w", encoding="utf-8") as f:
         f.write(html_content)
         
-    print(f"\n✅ Dynamic report generated: {output_file}")
+    print(f"\nSUCCESS: Dynamic report generated: {output_file}")
     
     # Auto-open in browser (optional - can be disabled)
     try:
         import webbrowser
         abs_path = os.path.abspath(output_file)
-        print(f"🌐 Opening report in browser...")
+        print(f"Opening report in browser...")
         webbrowser.open(f"file:///{abs_path}")
     except Exception as e:
-        print(f"💡 Open manually: {output_file}")
+        print(f"TIP: Open manually: {output_file}")
 
 if __name__ == "__main__":
     generate_dynamic_report()

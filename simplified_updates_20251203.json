@@ -1,0 +1,23 @@
+{
+  "start_time": "2025-12-03T09:54:29.817542",
+  "initial_capital": 100000,
+  "broker_charges_per_trade": 20,
+  "min_accuracy_score": 70,
+  "target_trades_per_day": "1-10",
+  "focus": "High Accuracy Quality Trades",
+  "session_count": 4,
+  "trades": [],
+  "positions": [],
+  "performance": {
+    "total_trades": 0,
+    "winning_trades": 0,
+    "losing_trades": 0,
+    "total_pnl": 0,
+    "total_charges": 0,
+    "net_pnl": 0,
+    "win_rate": 0,
+    "avg_accuracy_score": 0,
+    "avg_holding_time": 0
+  },
+  "last_resumed": "2025-12-03T10:14:52.480268"
+}

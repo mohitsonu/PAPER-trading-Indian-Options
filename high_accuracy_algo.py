@@ -95,6 +95,8 @@ class HighAccuracyAlgo:
         # OPTIMIZED ENTRY CRITERIA (Better Strike Selection)
         if strategy_mode == 'SIMPLIFIED':
             self.min_accuracy_score = 70   # Lower for simplified (more trades)
+        elif strategy_mode == 'MULTI':
+            self.min_accuracy_score = 70   # Use lowest threshold, let all strategies compete
         else:
             self.min_accuracy_score = 90   # Higher for current (fewer trades)
         
@@ -541,29 +543,57 @@ class HighAccuracyAlgo:
             print(f"❌ Error saving daily capital CSV: {e}")
     
     def login(self):
-        """Login to Shoonya API"""
-        totp = pyotp.TOTP(self.totp_key).now()
+        """Login to Shoonya API with retry logic"""
         
-        try:
-            result = self.api.login(
-                userid=self.user_id,
-                password=self.password,
-                twoFA=totp,
-                vendor_code=self.vendor_code,
-                api_secret=self.api_secret,
-                imei='abc1234'
-            )
+        max_retries = 3
+        for attempt in range(max_retries):
+            totp = pyotp.TOTP(self.totp_key).now()
             
-            if result and result.get('stat') == 'Ok':
-                print("✅ Login successful!")
-                return True
-            else:
-                print(f"❌ Login failed: {result}")
-                return False
+            print(f"🔐 Login attempt {attempt + 1}/{max_retries}")
+            print(f"   User ID: {self.user_id}")
+            print(f"   TOTP: {totp}")
+            
+            try:
+                result = self.api.login(
+                    userid=self.user_id,
+                    password=self.password,
+                    twoFA=totp,
+                    vendor_code=self.vendor_code,
+                    api_secret=self.api_secret,
+                    imei='abc1234'
+                )
                 
-        except Exception as e:
-            print(f"❌ Login error: {e}")
-            return False
+                print(f"🔍 Login result: {result}")
+                
+                if result and result.get('stat') == 'Ok':
+                    print("✅ Login successful!")
+                    return True
+                elif result is None:
+                    print(f"⚠️ API returned None (attempt {attempt + 1})")
+                    if attempt < max_retries - 1:
+                        print("   Retrying in 2 seconds...")
+                        time.sleep(2)
+                        continue
+                else:
+                    print(f"❌ Login failed: {result}")
+                    if result:
+                        print(f"   Status: {result.get('stat', 'Unknown')}")
+                        print(f"   Message: {result.get('emsg', 'No message')}")
+                    return False
+                    
+            except Exception as e:
+                print(f"❌ Login error: {e}")
+                if attempt < max_retries - 1:
+                    print("   Retrying in 2 seconds...")
+                    time.sleep(2)
+                    continue
+                else:
+                    import traceback
+                    traceback.print_exc()
+                    return False
+        
+        print("❌ All login attempts failed")
+        return False
     
     def get_current_expiry(self):
         """Get current expiry date from config file"""
@@ -584,11 +614,12 @@ class HighAccuracyAlgo:
     def get_comprehensive_market_data(self):
         """Get comprehensive market data with extended analysis"""
         
-        # Dynamic strike range - Extended to 27000
-        strikes = [25200, 25250, 25300, 25350, 25400, 25450, 25500, 25550, 25600, 
-                   25650, 25700, 25750, 25800, 25850, 25900, 25950, 26000, 26050,
-                   26100, 26150, 26200, 26250, 26300, 26350, 26400, 26450, 26500,
-                   26550, 26600, 26650, 26700, 26750, 26800, 26850, 26900, 26950, 27000]
+        # Strike range optimized for single strategy (30 strikes)
+        # When running BOTH strategies, use run_current_only.py instead
+        strikes = [25400, 25450, 25500, 25550, 25600, 25650, 25700, 25750, 25800, 
+                   25850, 25900, 25950, 26000, 26050, 26100, 26150, 26200, 26250, 
+                   26300, 26350, 26400, 26450, 26500, 26550, 26600, 26650, 26700,
+                   26750, 26800, 26850]
         
         # Get expiry from config file
         expiry = self.get_current_expiry()
@@ -597,16 +628,36 @@ class HighAccuracyAlgo:
         strikes_found = []
         
         print(f"🔍 Fetching data for {len(strikes)} strikes with expiry {expiry}...")
+        print(f"⏳ This may take 1-2 minutes... Please wait...")
         
         # Debug: Show first matched symbol
         debug_shown = False
+        progress_counter = 0
         
         for strike in strikes:
+            progress_counter += 1
+            if progress_counter % 10 == 0:
+                print(f"   📊 Progress: {progress_counter}/{len(strikes)} strikes checked...")
             ce_found = False
             pe_found = False
             
-            # Try to find options for this strike
-            search_result = self.api.searchscrip(exchange="NFO", searchtext=str(strike))
+            # Add small delay to avoid rate limiting (50ms per strike)
+            time.sleep(0.05)
+            
+            # Try to find options for this strike with retry
+            search_result = None
+            for retry in range(2):  # Try twice
+                try:
+                    search_result = self.api.searchscrip(exchange="NFO", searchtext=str(strike))
+                    if search_result and search_result.get('stat') == 'Ok':
+                        break
+                    elif search_result and search_result.get('stat') == 'Not_Ok':
+                        # Rate limit hit, wait and retry
+                        time.sleep(0.5)
+                except Exception as e:
+                    if retry == 0:
+                        time.sleep(0.5)
+                    continue
             
             if search_result and search_result.get('stat') == 'Ok':
                 symbols = search_result.get('values', [])
@@ -616,12 +667,14 @@ class HighAccuracyAlgo:
                     optt = symbol.get('optt', '')
                     
                     # Strict validation: Must be NIFTY (not BANKNIFTY), must have exact expiry and strike
-                    # Expected format: NIFTY25NOV2425900CE or NIFTY25NOV2425900PE
+                    # Expected formats: 
+                    # - Old: NIFTY25NOV2425900CE or NIFTY25NOV2425900PE
+                    # - New: NIFTY09DEC25C26000 or NIFTY09DEC25P26000
                     if (tsym.startswith('NIFTY') and 
                         not tsym.startswith('NIFTYBANK') and
                         expiry in tsym and 
                         str(strike) in tsym and 
-                        optt in ['CE', 'PE'] and
+                        (optt in ['CE', 'PE'] or optt in ['C', 'P']) and  # Support both formats
                         len(tsym) < 25):  # Reasonable length check
                         try:
                             quotes = self.api.get_quotes(exchange="NFO", token=symbol.get('token'))
@@ -635,10 +688,13 @@ class HighAccuracyAlgo:
                                     print(f"✅ Sample: {tsym} @ ₹{ltp} | Last trade: {ltt}")
                                     debug_shown = True
                                 
+                                # Normalize option type (C -> CE, P -> PE)
+                                normalized_optt = 'CE' if optt in ['CE', 'C'] else 'PE'
+                                
                                 data = {
                                     'symbol': tsym,
                                     'strike': strike,
-                                    'option_type': optt,
+                                    'option_type': normalized_optt,
                                     'token': symbol.get('token'),
                                     'ltp': ltp,
                                     'volume': int(quotes.get('v', 0)),
@@ -654,7 +710,7 @@ class HighAccuracyAlgo:
                                 }
                                 market_data.append(data)
                                 
-                                if optt == 'CE':
+                                if optt in ['CE', 'C']:
                                     ce_found = True
                                 else:
                                     pe_found = True
@@ -2271,10 +2327,10 @@ class HighAccuracyAlgo:
     def find_high_accuracy_opportunities(self):
         """Find only high accuracy trading opportunities"""
         
-        # 🚨 FILTER 1: MAX TRADES PER DAY (8 trades max - STRICT!)
+        # 🚨 FILTER 1: MAX TRADES PER DAY (10 trades max - STRICT!)
         entry_trades_today = sum(1 for t in self.trade_history if t.get('action') == 'ENTRY')
-        if entry_trades_today >= 8:
-            print(f"🚫 MAX TRADES REACHED: {entry_trades_today}/8 trades today")
+        if entry_trades_today >= 10:
+            print(f"🚫 MAX TRADES REACHED: {entry_trades_today}/10 trades today")
             print(f"   Reason: Prevent overtrading - Quality over quantity")
             print(f"   💤 Sitting out for rest of day")
             return []
@@ -2527,38 +2583,53 @@ class HighAccuracyAlgo:
         #     
         #     return 'SCALPER'
         
-        # 2. TREND RIDER STRATEGY (15% allocation)
-        # Ride strong trends with cheap premiums for 60-120 minutes
-        if (20 <= ltp <= 40 and 
-            strength >= 0.7 and
-            trend in ['STRONG_BULLISH', 'STRONG_BEARISH', 'BULLISH', 'BEARISH']):
-            # Check trend alignment
-            if ((trend in ['STRONG_BULLISH', 'BULLISH'] and option_type == 'CE') or
-                (trend in ['STRONG_BEARISH', 'BEARISH'] and option_type == 'PE')):
+        # 2. TREND RIDER STRATEGY - 🔴 DISABLED (33.3% WR, ₹-3,471 loss)
+        # Poor risk:reward ratio (1:0.80) - loses more than it wins
+        # Disabled on Dec 3, 2025 based on performance analysis
+        # if (20 <= ltp <= 40 and 
+        #     strength >= 0.7 and
+        #     trend in ['STRONG_BULLISH', 'STRONG_BEARISH', 'BULLISH', 'BEARISH']):
+        #     if ((trend in ['STRONG_BULLISH', 'BULLISH'] and option_type == 'CE') or
+        #         (trend in ['STRONG_BEARISH', 'BEARISH'] and option_type == 'PE')):
+        #         return 'TREND_RIDER'
+        
+        # 3. SUPPORT/RESISTANCE BOUNCE - 🔴 DISABLED (12.5% WR, ₹-9,285 loss)
+        # SUPPORT_BOUNCE: 12.5% win rate - extremely poor performance
+        # RESISTANCE_BOUNCE: 0% win rate - never profitable
+        # Disabled on Dec 3, 2025 based on performance analysis
+        # round_numbers = [25500, 25600, 25700, 25800, 25900, 26000]
+        # nifty_level = self.last_nifty_price
+        # for level in round_numbers:
+        #     if abs(nifty_level - level) <= 20 and 15 <= ltp <= 50:
+        #         if nifty_level <= level and option_type == 'CE':
+        #             return 'SUPPORT_BOUNCE'
+        #         elif nifty_level >= level and option_type == 'PE':
+        #             return 'RESISTANCE_BOUNCE'
+        
+        # 4. SIMPLIFIED (PRICE ACTION) STRATEGY
+        # Pure price action based on EMA alignment and premium value
+        # Lower score threshold (70 vs 90) for more frequent trades
+        if self.strategy_mode == 'SIMPLIFIED' or self.strategy_mode == 'MULTI':
+            # Check if this is a good price action setup
+            ema_aligned = False
+            if self.indicators_5min:
+                ema_20 = self.indicators_5min.get('ema_20', 0)
+                ema_50 = self.indicators_5min.get('ema_50', 0)
                 
-                # Block TREND_RIDER in choppy markets
-                if market_condition and not market_condition['allow_trend_rider']:
-                    print(f"⚠️ TREND_RIDER blocked: {market_condition['reason']}")
-                    return 'CONTRARIAN'
-                
-                return 'TREND_RIDER'
+                # EMA alignment check
+                if option_type == 'CE' and ema_20 > ema_50:
+                    ema_aligned = True
+                elif option_type == 'PE' and ema_20 < ema_50:
+                    ema_aligned = True
+            
+            # SIMPLIFIED criteria: Good premium + EMA alignment + decent liquidity
+            if (25 <= ltp <= 80 and 
+                ema_aligned and
+                option_data['volume'] >= 1000 and
+                option_data['oi'] >= 200000):
+                return 'PRICE_ACTION_SIMPLIFIED'
         
-        # 3. SUPPORT/RESISTANCE BOUNCE STRATEGY (5% allocation)
-        # Trade bounces at key round numbers
-        round_numbers = [25500, 25600, 25700, 25800, 25900, 26000]
-        nifty_level = self.last_nifty_price
-        
-        # Check if NIFTY is near a key level (within 20 points)
-        for level in round_numbers:
-            if abs(nifty_level - level) <= 20 and 15 <= ltp <= 50:
-                # At support, buy CE (bounce up)
-                # At resistance, buy PE (bounce down)
-                if nifty_level <= level and option_type == 'CE':
-                    return 'SUPPORT_BOUNCE'
-                elif nifty_level >= level and option_type == 'PE':
-                    return 'RESISTANCE_BOUNCE'
-        
-        # 4. MOMENTUM BREAKOUT STRATEGY (disabled for now - needs more testing)
+        # 5. MOMENTUM BREAKOUT STRATEGY (disabled for now - needs more testing)
         # Catch explosive moves with RSI extremes + MACD crossover
         # if self.current_indicators:
         #     rsi = self.current_indicators.get('rsi', 50)
@@ -2570,7 +2641,7 @@ class HighAccuracyAlgo:
         #     elif option_type == 'PE' and rsi < 30 and macd < macd_signal:
         #         return 'MOMENTUM_BREAKOUT'
         
-        # 5. CONTRARIAN STRATEGY (PRIMARY - 100% allocation now that SCALPER is disabled)
+        # 6. CONTRARIAN STRATEGY (PRIMARY - 100% allocation now that SCALPER is disabled)
         # 🚨 CRITICAL: CONTRARIAN only works in TRENDING markets!
         # Block CONTRARIAN in RANGING/CHOPPY markets
         if market_condition:
@@ -2893,7 +2964,22 @@ class HighAccuracyAlgo:
                         elif holding_minutes >= 30 and profit_pct >= 0.25:
                             exits.append((position, current_price, 'BOUNCE_PROFIT_BOOK'))
                     
-                    # 4. CONTRARIAN STRATEGY (Default) - Original logic
+                    # 4. PRICE ACTION SIMPLIFIED STRATEGY - Medium-term holds (30-90 min)
+                    elif strategy == 'PRICE_ACTION_SIMPLIFIED':
+                        # Medium stop loss (20%)
+                        if current_price <= position['entry_price'] * 0.80:
+                            exits.append((position, current_price, 'SIMPLIFIED_STOP_LOSS'))
+                        # Medium target (40%)
+                        elif profit_pct >= 0.40:
+                            exits.append((position, current_price, 'SIMPLIFIED_TARGET'))
+                        # Time exit (90 min max)
+                        elif holding_minutes >= 90:
+                            exits.append((position, current_price, 'SIMPLIFIED_TIME_EXIT'))
+                        # Book profit after 30 min if 20%+
+                        elif holding_minutes >= 30 and profit_pct >= 0.20:
+                            exits.append((position, current_price, 'SIMPLIFIED_PROFIT_BOOK'))
+                    
+                    # 5. CONTRARIAN STRATEGY (Default) - Original logic
                     else:
                         # 🎯 SMART TRAILING STOP (if available)
                         if self.trailing_stop_manager and profit_pct > 0.05:
@@ -3655,8 +3741,10 @@ class HighAccuracyAlgo:
                 
                 cycle_count += 1
                 print(f"\n🔄 Cycle {cycle_count} - {datetime.now().strftime('%H:%M:%S')}")
+                print(f"💼 Current Positions: {len(self.positions)} | Capital: ₹{self.current_capital:,.2f}")
                 
                 # Get comprehensive market data
+                print(f"📡 Fetching market data (this takes 1-2 minutes)...")
                 market_data = self.get_comprehensive_market_data()
                 
                 if not market_data:
@@ -3682,7 +3770,7 @@ class HighAccuracyAlgo:
                 # Look for opportunities (but not too frequently)
                 time_since_last_check = datetime.now() - last_opportunity_time
                 
-                if time_since_last_check.total_seconds() >= 300:  # Check every 5 minutes (more frequent)
+                if time_since_last_check.total_seconds() >= 120:  # Check every 2 minutes (aligned with cycle time)
                     opportunities = self.find_high_accuracy_opportunities()
                     last_opportunity_time = datetime.now()
                     
@@ -3735,7 +3823,18 @@ class HighAccuracyAlgo:
         print(f"💰 Ending Capital: ₹{self.current_capital:,.2f}")
         print(f"📊 Net P&L: ₹{net_pnl:+,.2f} ({net_pnl_pct:+.2f}%)")
         
-        completed_trades = self.get_completed_trades()
+        # Get completed trades from CSV (more reliable than memory)
+        completed_trades = []
+        try:
+            if os.path.exists(self.csv_file):
+                df = pd.read_csv(self.csv_file)
+                exits = df[df['action'] == 'EXIT']
+                completed_trades = exits.to_dict('records')
+        except Exception as e:
+            print(f"⚠️ Error reading CSV: {e}")
+            # Fallback to memory
+            completed_trades = self.get_completed_trades()
+        
         print(f"📋 Total Trades: {len(completed_trades)}")
         
         if completed_trades:
@@ -3794,36 +3893,57 @@ class HighAccuracyAlgo:
         else:
             print("✅ Performance within acceptable range")
         
-        # Send daily summary to Telegram
-        if self.telegram and completed_trades:
+        # Send daily summary to Telegram (ALWAYS, even with 0 trades)
+        if self.telegram:
             try:
-                winning_trades = len([t for t in completed_trades if t.get('net_pnl', 0) > 0])
-                losing_trades = len(completed_trades) - winning_trades
-                win_rate = (winning_trades / len(completed_trades)) * 100
+                # Calculate metrics (handle 0 trades case)
+                # Use correct P&L column name (net_pnl_after_charges from CSV)
+                pnl_key = 'net_pnl_after_charges' if 'net_pnl_after_charges' in (completed_trades[0].keys() if completed_trades else []) else 'net_pnl'
                 
-                total_gross_pnl = sum([t.get('gross_pnl', 0) for t in completed_trades])
-                total_charges = sum([t.get('total_charges', 0) for t in completed_trades])
-                avg_score = sum([t.get('accuracy_score', 0) for t in completed_trades]) / len(completed_trades)
-                avg_holding = sum([t.get('holding_minutes', 0) for t in completed_trades]) / len(completed_trades)
+                winning_trades = len([t for t in completed_trades if t.get(pnl_key, 0) > 0]) if completed_trades else 0
+                losing_trades = len(completed_trades) - winning_trades if completed_trades else 0
+                win_rate = (winning_trades / len(completed_trades)) * 100 if completed_trades else 0
+                
+                total_gross_pnl = sum([t.get('gross_pnl', 0) for t in completed_trades]) if completed_trades else 0
+                total_charges = sum([t.get('total_charges', 0) for t in completed_trades]) if completed_trades else 0
+                avg_score = sum([t.get('accuracy_score', 0) for t in completed_trades]) / len(completed_trades) if completed_trades else 0
+                avg_holding = sum([t.get('holding_time_minutes', 0) for t in completed_trades]) / len(completed_trades) if completed_trades else 0
                 
                 avg_win = 0
                 avg_loss = 0
                 if winning_trades > 0:
-                    avg_win = sum([t.get('net_pnl', 0) for t in completed_trades if t.get('net_pnl', 0) > 0]) / winning_trades
+                    avg_win = sum([t.get(pnl_key, 0) for t in completed_trades if t.get(pnl_key, 0) > 0]) / winning_trades
                 if losing_trades > 0:
-                    avg_loss = sum([t.get('net_pnl', 0) for t in completed_trades if t.get('net_pnl', 0) < 0]) / losing_trades
+                    avg_loss = sum([t.get(pnl_key, 0) for t in completed_trades if t.get(pnl_key, 0) < 0]) / losing_trades
                 
                 profit_factor = abs(total_gross_pnl / total_charges) if total_charges > 0 else 0
-                high_score_trades = len([t for t in completed_trades if t.get('accuracy_score', 0) >= 90])
+                high_score_trades = len([t for t in completed_trades if t.get('accuracy_score', 0) >= 90]) if completed_trades else 0
                 successful_high_score = len([t for t in completed_trades 
-                                           if t.get('accuracy_score', 0) >= 90 and t.get('net_pnl', 0) > 0])
+                                           if t.get('accuracy_score', 0) >= 90 and t.get('net_pnl', 0) > 0]) if completed_trades else 0
                 high_score_success = (successful_high_score / high_score_trades * 100) if high_score_trades > 0 else 0
                 
+                # Get actual starting capital for today from persistence
+                today = datetime.now().strftime('%Y-%m-%d')
+                actual_starting_capital = self.initial_capital
+                
+                try:
+                    with open(self.capital_persistence_file, 'r') as f:
+                        persistence_data = json.load(f)
+                        daily_sessions = persistence_data.get('daily_sessions', {})
+                        if today in daily_sessions:
+                            actual_starting_capital = daily_sessions[today].get('start_capital', self.initial_capital)
+                except:
+                    pass
+                
+                # Recalculate net_pnl based on actual starting capital
+                actual_net_pnl = self.current_capital - actual_starting_capital
+                actual_net_pnl_pct = (actual_net_pnl / actual_starting_capital) * 100 if actual_starting_capital > 0 else 0
+                
                 self.telegram.send_daily_summary({
-                    'starting_capital': self.initial_capital,
+                    'starting_capital': actual_starting_capital,
                     'ending_capital': self.current_capital,
-                    'net_pnl': net_pnl,
-                    'net_pnl_pct': net_pnl_pct,
+                    'net_pnl': actual_net_pnl,
+                    'net_pnl_pct': actual_net_pnl_pct,
                     'total_trades': len(completed_trades),
                     'win_rate': win_rate,
                     'wins': winning_trades,
@@ -3843,6 +3963,18 @@ class HighAccuracyAlgo:
                 print("📱 Telegram daily summary sent")
             except Exception as e:
                 print(f"⚠️ Telegram summary failed: {e}")
+                import traceback
+                traceback.print_exc()
+        
+        # 🔄 AUTO-GENERATE FINAL TRADING REPORT
+        if DYNAMIC_REPORT_AVAILABLE:
+            try:
+                print("\n📊 Generating final trading report...")
+                generate_dynamic_report.generate_dynamic_report()
+                print("✅ Trading report updated: trading_report.html")
+                print("💡 Open in browser to view detailed analysis")
+            except Exception as e:
+                print(f"⚠️ Report generation failed: {e}")
 
 def main():
     """Main function for high accuracy trading"""

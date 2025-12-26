@@ -202,48 +202,53 @@ class PriorityFeatures:
         condition = None
         score = 0
         allow_scalper = False
-        allow_contrarian = True  # Contrarian works in most conditions
+        allow_contrarian = False  # 🚨 FIX: CONTRARIAN only works in TRENDING markets!
         allow_trend_rider = False
         reason = ""
         
-        # TRENDING MARKET (Best for Trend Rider, Good for Scalper)
+        # TRENDING MARKET (Best for ALL strategies)
         if adx > 25 and trend_consistency > 0.65 and price_range > 0.3:
             condition = 'TRENDING'
             score = 90
             allow_scalper = True
+            allow_contrarian = True  # ✅ CONTRARIAN works in trending markets
             allow_trend_rider = True
             reason = f"Strong trend (ADX: {adx:.1f}, Consistency: {trend_consistency:.1%})"
         
-        # CHOPPY MARKET (Avoid Scalper, Contrarian only)
+        # CHOPPY MARKET (NO TRADING - All strategies fail)
         elif adx < 20 and trend_consistency < 0.55:
             condition = 'CHOPPY'
             score = 30
-            allow_scalper = False  # 🚨 CRITICAL: No scalper in choppy
+            allow_scalper = False
+            allow_contrarian = False  # 🚨 FIX: CONTRARIAN fails in choppy markets
             allow_trend_rider = False
-            reason = f"Choppy market (ADX: {adx:.1f}, Consistency: {trend_consistency:.1%})"
+            reason = f"Choppy market (ADX: {adx:.1f}, Consistency: {trend_consistency:.1%}) - SIT OUT"
         
-        # VOLATILE MARKET (Risky, limited trading)
+        # VOLATILE MARKET (NO TRADING - Too risky)
         elif volatility > 1.5:
             condition = 'VOLATILE'
             score = 40
             allow_scalper = False
+            allow_contrarian = False  # 🚨 FIX: CONTRARIAN fails in volatile markets
             allow_trend_rider = False
-            reason = f"High volatility ({volatility:.2f}%)"
+            reason = f"High volatility ({volatility:.2f}%) - SIT OUT"
         
-        # RANGE BOUND (Good for Contrarian, Limited Scalper)
+        # RANGE BOUND (NO TRADING - CONTRARIAN needs trends, not ranges)
         elif price_range < 0.3 and adx < 25:
             condition = 'RANGE_BOUND'
             score = 60
-            allow_scalper = True  # Allow scalper in tight range
+            allow_scalper = False
+            allow_contrarian = False  # 🚨 FIX: CONTRARIAN needs trending markets
             allow_trend_rider = False
-            reason = f"Range-bound (Range: {price_range:.2f}%)"
+            reason = f"Range-bound (Range: {price_range:.2f}%) - SIT OUT"
         
-        # MODERATE (Default condition)
+        # MODERATE (Allow trading if ADX shows some trend)
         else:
             condition = 'MODERATE'
             score = 70
-            allow_scalper = True
-            allow_trend_rider = adx > 20
+            allow_scalper = adx > 22
+            allow_contrarian = adx > 22  # 🚨 FIX: Only allow if some trend exists
+            allow_trend_rider = adx > 22
             reason = f"Moderate conditions (ADX: {adx:.1f})"
         
         # Store in history

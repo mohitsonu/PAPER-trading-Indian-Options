@@ -1,11 +1,8 @@
 {
-  "current_expiry": "02DEC25",
-  "next_expiry": "09DEC25",
+  "current_expiry": "23DEC25",
+  "next_expiry": "23DEC25",
   "expiry_dates": {
-    "november_2025": [
-      "25NOV25",
-      "28NOV25"
-    ],
+    
     "december_2025": [
       "02DEC25",
       "09DEC25",

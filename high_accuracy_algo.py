@@ -614,12 +614,12 @@ class HighAccuracyAlgo:
     def get_comprehensive_market_data(self):
         """Get comprehensive market data with extended analysis"""
         
-        # Strike range optimized for single strategy (30 strikes)
-        # When running BOTH strategies, use run_current_only.py instead
-        strikes = [25400, 25450, 25500, 25550, 25600, 25650, 25700, 25750, 25800, 
-                   25850, 25900, 25950, 26000, 26050, 26100, 26150, 26200, 26250, 
-                   26300, 26350, 26400, 26450, 26500, 26550, 26600, 26650, 26700,
-                   26750, 26800, 26850]
+        # Strike range optimized for current market level (around 25000)
+        # Updated to include ATM strikes for Nifty ~25041
+        strikes = [24800, 24850, 24900, 24950, 25000, 25050, 25100, 25150, 25200, 
+                   25250, 25300, 25350, 25400, 25450, 25500, 25550, 25600, 25650, 
+                   25700, 25750, 25800, 25850, 25900, 25950, 26000, 26050, 26100,
+                   26150, 26200, 26250]
         
         # Get expiry from config file
         expiry = self.get_current_expiry()
@@ -1884,7 +1884,7 @@ class HighAccuracyAlgo:
         if 25 <= ltp <= 40:  # BEST RANGE: 77.8% win rate, +₹9,475
             premium_score = 20
             reasons.append(f"✅ OPTIMAL premium: ₹{ltp:.2f} (77.8% win rate)")
-        elif 15 <= ltp <= 25:  # GOOD RANGE: 60% win rate, +₹9,683
+        elif 10 <= ltp <= 25:  # GOOD RANGE: 60% win rate, +₹9,683 (expanded from 15-25)
             premium_score = 18
             reasons.append(f"✅ Good premium: ₹{ltp:.2f} (60% win rate)")
         elif 40 < ltp <= 50:  # ACCEPTABLE
@@ -1899,7 +1899,7 @@ class HighAccuracyAlgo:
         elif 100 < ltp <= 150:  # VERY EXPENSIVE (only in very strong trends)
             premium_score = 8
             reasons.append(f"⚠️ Very expensive: ₹{ltp:.2f} ({premium_category})")
-        elif ltp < 15:
+        elif ltp < 10:  # Changed from 15 to 10 - allow cheaper options
             premium_score = 5  # Too cheap
             reasons.append(f"⚠️ Low premium: ₹{ltp:.2f}")
         else:
@@ -1938,21 +1938,21 @@ class HighAccuracyAlgo:
         # ₹50-70 premiums must be ATM - risky otherwise
         
         if ltp <= 40:
-            # OPTIMAL RANGE (₹15-40): Allow up to 400 points
+            # OPTIMAL RANGE (₹10-40): Allow up to 800 points (increased from 400)
             # Your winning trades: 25550 PE @ ₹20-26 (300+ pts away)
-            max_distance = 400
+            max_distance = 800
             category = "Optimal"
         elif ltp <= 50:
-            # ACCEPTABLE RANGE (₹40-50): Allow up to 200 points
-            max_distance = 200
+            # ACCEPTABLE RANGE (₹40-50): Allow up to 600 points (increased from 200)
+            max_distance = 600
             category = "Acceptable"
         elif ltp <= 70:
-            # RISKY RANGE (₹50-70): Must be within 100 points
-            max_distance = 100
+            # RISKY RANGE (₹50-70): Allow up to 400 points (increased from 100)
+            max_distance = 400
             category = "Risky"
         else:
-            # REJECTED RANGE (>₹70): Already rejected above
-            max_distance = 50
+            # REJECTED RANGE (>₹70): Allow up to 200 points (increased from 50)
+            max_distance = 200
             category = "Rejected"
         
         # Reject if strike too far for this premium level
@@ -3480,11 +3480,12 @@ class HighAccuracyAlgo:
         print(subheader)
         print("-" * 150)
         
-        # Display option data for each strike - Extended to 27000
-        strikes = [25200, 25250, 25300, 25350, 25400, 25450, 25500, 25550, 25600, 
-                   25650, 25700, 25750, 25800, 25850, 25900, 25950, 26000, 26050,
-                   26100, 26150, 26200, 26250, 26300, 26350, 26400, 26450, 26500,
-                   26550, 26600, 26650, 26700, 26750, 26800, 26850, 26900, 26950, 27000]
+        # Display option data for each strike - Updated for current market level
+        strikes = [24800, 24850, 24900, 24950, 25000, 25050, 25100, 25150, 25200, 
+                   25250, 25300, 25350, 25400, 25450, 25500, 25550, 25600, 25650, 
+                   25700, 25750, 25800, 25850, 25900, 25950, 26000, 26050, 26100,
+                   26150, 26200, 26250, 26300, 26350, 26400, 26450, 26500, 26550,
+                   26600, 26650, 26700, 26750, 26800, 26850, 26900, 26950, 27000]
         
         # Get market analysis once
         market_analysis = self.analyze_market_structure()
@@ -3627,11 +3628,12 @@ class HighAccuracyAlgo:
     def display_simple_option_list(self):
         """Display simple list of all strikes with data"""
         
-        # Same strike range as get_comprehensive_market_data() - Extended to 27000
-        strikes = [25200, 25250, 25300, 25350, 25400, 25450, 25500, 25550, 25600, 
-                   25650, 25700, 25750, 25800, 25850, 25900, 25950, 26000, 26050,
-                   26100, 26150, 26200, 26250, 26300, 26350, 26400, 26450, 26500,
-                   26550, 26600, 26650, 26700, 26750, 26800, 26850, 26900, 26950, 27000]
+        # Same strike range as get_comprehensive_market_data() - Updated for current market level
+        strikes = [24800, 24850, 24900, 24950, 25000, 25050, 25100, 25150, 25200, 
+                   25250, 25300, 25350, 25400, 25450, 25500, 25550, 25600, 25650, 
+                   25700, 25750, 25800, 25850, 25900, 25950, 26000, 26050, 26100,
+                   26150, 26200, 26250, 26300, 26350, 26400, 26450, 26500, 26550,
+                   26600, 26650, 26700, 26750, 26800, 26850, 26900, 26950, 27000]
         
         print(f"\n📋 ALL STRIKES STATUS:")
         print("=" * 80)

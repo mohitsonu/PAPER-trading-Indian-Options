@@ -1,0 +1,111 @@
+================================================================================
+🚀 QUICK START - GITHUB ACTIONS (20 MINUTES)
+================================================================================
+
+YOU ASKED: "Can't I run through GitHub?"
+
+YES! Here's how to set it up in 20 minutes:
+
+================================================================================
+📋 CHECKLIST
+================================================================================
+
+Before you start, make sure you have:
+✅ Email address
+✅ Your Shoonya credentials (.env file)
+✅ All your Python files ready
+✅ 20 minutes of time
+
+================================================================================
+🎯 5 SIMPLE STEPS
+================================================================================
+
+STEP 1: Create GitHub Account (3 minutes)
+------------------------------------------
+→ Go to: https://github.com/
+→ Click "Sign up"
+→ Enter email, password, username
+→ Verify email
+→ Choose "Free" plan
+
+STEP 2: Create Repository (2 minutes)
+--------------------------------------
+→ Click "+" → "New repository"
+→ Name: trading-bot
+→ Select: PRIVATE (important!)
+→ Check "Add README"
+→ Click "Create repository"
+
+STEP 3: Upload Files (5 minutes)
+---------------------------------
+→ Click "Add file" → "Upload files"
+→ Drag and drop ALL your .py files
+→ Include: .github/workflows/trading-bot.yml
+→ DON'T upload .env file
+→ Click "Commit changes"
+
+STEP 4: Add Secrets (5 minutes)
+--------------------------------
+→ Settings → Secrets and variables → Actions
+→ Click "New repository secret"
+→ Add these 5 secrets:
+   1. SHOONYA_USER_ID
+   2. SHOONYA_PASSWORD
+   3. SHOONYA_TOTP_KEY
+   4. SHOONYA_VENDOR_CODE
+   5. SHOONYA_API_SECRET
+
+STEP 5: Enable & Test (5 minutes)
+----------------------------------
+→ Go to "Actions" tab
+→ Enable workflows if needed
+→ Click "Run workflow" to test
+→ View logs to confirm it works
+
+================================================================================
+✅ DONE!
+================================================================================
+
+Your bot is now running automatically!
+
+What happens:
+- Runs every 5 minutes during market hours
+- Monday-Friday, 9:15 AM - 3:30 PM
+- No laptop needed
+- 100% FREE
+
+================================================================================
+📖 DETAILED GUIDE
+================================================================================
+
+For step-by-step instructions with screenshots:
+→ Open: GITHUB_SETUP_COMPLETE.md
+
+For comparison with other solutions:
+→ Open: FINAL_SOLUTION.txt
+
+================================================================================
+📊 MONITORING
+================================================================================
+
+View logs:
+→ GitHub.com → Your repository → Actions → Click any run
+
+Download results:
+→ After run completes → Scroll to Artifacts → Download
+
+Mobile:
+→ Download GitHub app (iOS/Android)
+→ Monitor from anywhere
+
+================================================================================
+🎉 THAT'S IT!
+================================================================================
+
+20 minutes of setup = Automated trading forever!
+
+No laptop needed. No credit card needed. Completely FREE!
+
+Start now: Follow the 5 steps above!
+
+================================================================================

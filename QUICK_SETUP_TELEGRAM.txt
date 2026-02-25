@@ -1,0 +1,40 @@
+📱 TELEGRAM + HTML REPORTS NOW WORK IN GITHUB ACTIONS!
+================================================================
+
+✅ WHAT'S DONE:
+- GitHub Actions workflow updated
+- Telegram notifications integrated
+- HTML report generation added
+- Code pushed to GitHub
+
+🔐 WHAT YOU NEED TO DO (5 minutes):
+
+1. Go to: https://github.com/mohitsonu/PAPER-trading/settings/secrets/actions
+
+2. Click "New repository secret" and add:
+
+   Secret 1:
+   Name: TELEGRAM_BOT_TOKEN
+   Value: 8468449326:AAHCEko5T1squW5VFJjL4SdS0nr8h1JB-sU
+
+   Secret 2:
+   Name: TELEGRAM_CHAT_ID
+   Value: @optionsalgotesting
+
+3. Done! That's it!
+
+📊 WHAT YOU'LL GET:
+
+✅ Real-time Telegram notifications when trades execute
+✅ Daily summary at market close (3:25 PM)
+✅ HTML report generated every cycle
+✅ All reports saved in GitHub Actions artifacts
+
+🎯 NEXT WORKFLOW RUN:
+- Will happen automatically every 5 minutes during market hours
+- Check your Telegram channel for notifications!
+- Download HTML reports from Actions → Artifacts
+
+================================================================
+Read TELEGRAM_GITHUB_SETUP.md for detailed instructions
+================================================================

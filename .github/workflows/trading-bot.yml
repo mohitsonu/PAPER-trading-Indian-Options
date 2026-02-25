@@ -96,6 +96,54 @@ jobs:
           auto_trader_scheduler.log
         retention-days: 30
     
+    - name: 💾 Organize and commit trade files to repository
+      if: always()
+      run: |
+        # Create folders if they don't exist
+        mkdir -p trade_journal/csv
+        mkdir -p trade_journal/json
+        mkdir -p trade_journal/logs
+        
+        # Move CSV files to csv folder
+        if ls high_accuracy_trades_*.csv 1> /dev/null 2>&1; then
+          mv high_accuracy_trades_*.csv trade_journal/csv/ 2>/dev/null || true
+          echo "✅ Moved CSV files to trade_journal/csv/"
+        fi
+        
+        # Move JSON files to json folder
+        if ls high_accuracy_updates_*.json 1> /dev/null 2>&1; then
+          mv high_accuracy_updates_*.json trade_journal/json/ 2>/dev/null || true
+          echo "✅ Moved JSON files to trade_journal/json/"
+        fi
+        
+        # Move capital persistence to json folder
+        if [ -f "capital_persistence.json" ]; then
+          mv capital_persistence.json trade_journal/json/ 2>/dev/null || true
+          echo "✅ Moved capital_persistence.json to trade_journal/json/"
+        fi
+        
+        # Move log files to logs folder
+        if [ -f "auto_trader_scheduler.log" ]; then
+          mv auto_trader_scheduler.log trade_journal/logs/ 2>/dev/null || true
+          echo "✅ Moved log files to trade_journal/logs/"
+        fi
+        
+        # Configure git
+        git config --global user.name "Trading Bot"
+        git config --global user.email "bot@trading.com"
+        
+        # Add and commit files
+        git add trade_journal/
+        
+        # Check if there are changes to commit
+        if git diff --staged --quiet; then
+          echo "ℹ️ No new trade files to commit"
+        else
+          git commit -m "📊 Auto-save trade journal - $(date +'%Y-%m-%d %H:%M:%S IST')"
+          git push
+          echo "✅ Trade files committed to repository!"
+        fi
+    
     - name: 📈 Display summary
       if: always()
       run: |

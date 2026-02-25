@@ -3,11 +3,15 @@
 Setup your bot token and chat ID here
 """
 
+import os
+
 # Get these from @BotFather on Telegram
-TELEGRAM_BOT_TOKEN = "8468449326:AAHCEko5T1squW5VFJjL4SdS0nr8h1JB-sU"  # Example: "1234567890:ABCdefGHIjklMNOpqrsTUVwxyz"
+# Can be overridden by environment variables (for GitHub Actions)
+TELEGRAM_BOT_TOKEN = os.getenv('TELEGRAM_BOT_TOKEN', "8468449326:AAHCEko5T1squW5VFJjL4SdS0nr8h1JB-sU")
 
 # Get this from your channel/group
-TELEGRAM_CHAT_ID = "@optionsalgotesting"  # Example: "-1001234567890" or "123456789"
+# Can be overridden by environment variables (for GitHub Actions)
+TELEGRAM_CHAT_ID = os.getenv('TELEGRAM_CHAT_ID', "@optionsalgotesting")
 
 # Enable/Disable Telegram notifications
 TELEGRAM_ENABLED = True  # Set to True after configuring

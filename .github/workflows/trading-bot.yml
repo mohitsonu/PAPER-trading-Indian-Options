@@ -40,6 +40,8 @@ jobs:
         echo "SHOONYA_TOTP_KEY=${{ secrets.SHOONYA_TOTP_KEY }}" >> .env
         echo "SHOONYA_VENDOR_CODE=${{ secrets.SHOONYA_VENDOR_CODE }}" >> .env
         echo "SHOONYA_API_SECRET=${{ secrets.SHOONYA_API_SECRET }}" >> .env
+        echo "TELEGRAM_BOT_TOKEN=${{ secrets.TELEGRAM_BOT_TOKEN }}" >> .env
+        echo "TELEGRAM_CHAT_ID=${{ secrets.TELEGRAM_CHAT_ID }}" >> .env
     
     - name: ⏰ Check if market is open
       id: market_check
@@ -94,6 +96,7 @@ jobs:
           high_accuracy_updates_*.json
           capital_persistence.json
           auto_trader_scheduler.log
+          trading_report.html
         retention-days: 30
     
     - name: 💾 Organize and commit trade files to repository

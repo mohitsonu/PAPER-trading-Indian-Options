@@ -3,6 +3,7 @@
 🤖 GITHUB ACTIONS RUNNER
 Simplified runner for GitHub Actions environment
 Runs a single trading cycle and exits
+Includes Telegram notifications and HTML report generation
 """
 
 import sys
@@ -10,12 +11,41 @@ import os
 from datetime import datetime
 from high_accuracy_algo import HighAccuracyAlgo
 
+# Telegram integration
+try:
+    from telegram_signals.telegram_notifier import TelegramNotifier
+    from telegram_signals.config import TELEGRAM_BOT_TOKEN, TELEGRAM_CHAT_ID, TELEGRAM_ENABLED
+    TELEGRAM_AVAILABLE = True
+except ImportError:
+    TELEGRAM_AVAILABLE = False
+    print("⚠️ Telegram module not available")
+
+# HTML Report generation
+try:
+    import generate_dynamic_report
+    REPORT_AVAILABLE = True
+except ImportError:
+    REPORT_AVAILABLE = False
+    print("⚠️ Report generation module not available")
+
 def main():
     print("=" * 60)
     print("🤖 GITHUB ACTIONS - AUTO TRADING BOT")
     print("=" * 60)
     print(f"⏰ Run Time: {datetime.now().strftime('%Y-%m-%d %H:%M:%S IST')}")
     print("=" * 60)
+    
+    # Initialize Telegram if available
+    telegram = None
+    if TELEGRAM_AVAILABLE and TELEGRAM_ENABLED:
+        try:
+            # Check for environment variables first (GitHub Secrets)
+            bot_token = os.getenv('TELEGRAM_BOT_TOKEN', TELEGRAM_BOT_TOKEN)
+            chat_id = os.getenv('TELEGRAM_CHAT_ID', TELEGRAM_CHAT_ID)
+            telegram = TelegramNotifier(bot_token, chat_id)
+            print("✅ Telegram notifications enabled")
+        except Exception as e:
+            print(f"⚠️ Telegram initialization failed: {e}")
     
     # Check if it's a trading day and market hours
     now = datetime.now()
@@ -98,6 +128,20 @@ def main():
                     
                     if success:
                         print(f"✅ Trade executed: {best_opp['symbol']}")
+                        
+                        # Send Telegram notification
+                        if telegram:
+                            try:
+                                telegram.send_trade_signal(
+                                    symbol=best_opp['symbol'],
+                                    action="BUY",
+                                    price=best_opp['ltp'],
+                                    score=best_opp['score_data']['score'],
+                                    strategy="CONTRARIAN",
+                                    reason=f"High accuracy opportunity (Score: {best_opp['score_data']['score']}/100)"
+                                )
+                            except Exception as e:
+                                print(f"⚠️ Telegram notification failed: {e}")
                     else:
                         print("❌ Trade execution failed")
                 else:
@@ -113,6 +157,16 @@ def main():
             print(f"📊 Managing {len(algo.active_positions)} active positions...")
             algo.manage_positions()
         
+        # Generate HTML report
+        if REPORT_AVAILABLE:
+            try:
+                print()
+                print("📊 Generating HTML trading report...")
+                generate_dynamic_report.generate_dynamic_report()
+                print("✅ Trading report generated: trading_report.html")
+            except Exception as e:
+                print(f"⚠️ Report generation failed: {e}")
+        
         # Display summary
         print()
         print("=" * 60)
@@ -125,6 +179,18 @@ def main():
         if algo.trade_history:
             total_pnl = sum(t.get('pnl', 0) for t in algo.trade_history)
             print(f"💵 Total P&L: ₹{total_pnl:+,.2f}")
+            
+            # Send daily summary via Telegram at market close
+            if telegram and current_time.hour >= 15 and current_time.minute >= 25:
+                try:
+                    telegram.send_daily_summary(
+                        total_trades=len(algo.trade_history),
+                        winning_trades=len([t for t in algo.trade_history if t.get('pnl', 0) > 0]),
+                        total_pnl=total_pnl,
+                        capital=algo.current_capital
+                    )
+                except Exception as e:
+                    print(f"⚠️ Telegram summary failed: {e}")
         
         print("=" * 60)
         

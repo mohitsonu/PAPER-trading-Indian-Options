@@ -1,0 +1,12 @@
+{
+  "timestamp": "2026-02-06T12:33:54.277506",
+  "capital": 255928.69869933408,
+  "positions": [],
+  "position_count": 0,
+  "metadata": {
+    "last_nifty_price": 25572.8,
+    "trade_count": 20,
+    "session_date": "2026-02-06"
+  },
+  "version": "1.0"
+}

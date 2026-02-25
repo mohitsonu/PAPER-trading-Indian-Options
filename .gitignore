@@ -5,18 +5,23 @@
 # Environment variables (contains API keys, passwords, TOTP)
 .env
 
-# Capital and trading data
-capital_persistence.json
-daily_capital_tracking.csv
+# Capital and trading data (root directory only)
+/capital_persistence.json
+/daily_capital_tracking.csv
 
-# Trade history (contains real trading data)
-high_accuracy_trades_*.csv
-high_accuracy_updates_*.json
-simplified_trades_*.csv
-current_trades_*.csv
+# Trade history in root directory (contains real trading data)
+/high_accuracy_trades_*.csv
+/high_accuracy_updates_*.json
+/simplified_trades_*.csv
+/current_trades_*.csv
 
-# Trade state files
-trade_state_*.json
+# Trade state files in root directory
+/trade_state_*.json
+
+# EXCEPTION: Allow trade journal folder files to be committed
+!trade_journal/csv/*.csv
+!trade_journal/json/*.json
+!trade_journal/logs/*.log
 
 # Session reports
 trading_report*.html

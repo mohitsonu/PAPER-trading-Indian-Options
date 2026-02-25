@@ -1,0 +1,4 @@
+timestamp,trade_id,action,symbol,strike,option_type,entry_price,exit_price,quantity,capital_invested,gross_pnl,total_charges,net_pnl_after_charges,capital,reason,accuracy_score,trend_strength,nifty_level,iv_rank,oi,volume,strategy,holding_time_minutes,candlestick_patterns,running_daily_pnl
+2026-01-30 12:18:02,HA20260130_121802,ENTRY,NIFTY03FEB26C26000,26000,CE,24.65,,225,5566.25,,,,173165.75973155905,"Good OI: 12,757,355, ✅ Good premium: ₹24.65 (60% win rate)",100,,25309.8,,12757355,41634775,CONTRARIAN,,MORNING_STAR,
+2026-01-30 12:26:39,HA20260130_122639,ENTRY,NIFTY03FEB26C26000,26000,CE,24.5,,225,5532.5,,,,167633.25973155905,"Good OI: 12,963,665, ✅ Good premium: ₹24.50 (60% win rate)",100,,25315.35,,12963665,43557605,CONTRARIAN,,,
+2026-01-30 12:29:31,HA20260130_122931,ENTRY,NIFTY03FEB26C25700,25700,CE,66.4,,225,14960.000000000002,,,,152673.25973155905,"Good OI: 5,806,125, Moderate premium: ₹66.40",100,,25312.75,,5806125,45209710,CONTRARIAN,,,

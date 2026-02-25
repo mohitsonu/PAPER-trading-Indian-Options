@@ -1,0 +1,1 @@
+timestamp,trade_id,action,symbol,strike,option_type,entry_price,exit_price,quantity,pnl,pnl_after_charges,capital,reason,accuracy_score,trend_strength,nifty_level,iv_rank,oi,volume,strategy,holding_time_minutes,candlestick_patterns

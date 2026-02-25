@@ -1,0 +1,113 @@
+{
+  "start_time": "2026-01-30T09:19:33.566523",
+  "last_update": "2026-01-30T12:29:31.699195",
+  "session_count": 1,
+  "initial_capital": 100000,
+  "current_capital": 152673.25973155905,
+  "broker_charges_per_trade": 20,
+  "min_accuracy_score": 90,
+  "target_trades_per_day": "1-10",
+  "focus": "High Accuracy Quality Trades",
+  "total_gross_pnl": 0,
+  "total_charges": 0,
+  "total_net_pnl": 0,
+  "open_positions": 3,
+  "positions": [
+    {
+      "trade_id": "HA20260130_121802",
+      "symbol": "NIFTY03FEB26C26000",
+      "entry_price": 24.65,
+      "quantity": 225,
+      "accuracy_score": 100,
+      "strategy": "CONTRARIAN",
+      "entry_time": "2026-01-30T12:18:02.078982"
+    },
+    {
+      "trade_id": "HA20260130_122639",
+      "symbol": "NIFTY03FEB26C26000",
+      "entry_price": 24.5,
+      "quantity": 225,
+      "accuracy_score": 100,
+      "strategy": "CONTRARIAN",
+      "entry_time": "2026-01-30T12:26:39.014476"
+    },
+    {
+      "trade_id": "HA20260130_122931",
+      "symbol": "NIFTY03FEB26C25700",
+      "entry_price": 66.4,
+      "quantity": 225,
+      "accuracy_score": 100,
+      "strategy": "CONTRARIAN",
+      "entry_time": "2026-01-30T12:29:31.697658"
+    }
+  ],
+  "trades": [
+    {
+      "trade_id": "HA20260130_121802",
+      "symbol": "NIFTY03FEB26C26000",
+      "strike": 26000,
+      "option_type": "CE",
+      "entry_price": 24.65,
+      "exit_price": 0,
+      "quantity": 225,
+      "gross_pnl": 0,
+      "net_pnl": 0,
+      "charges": 0,
+      "accuracy_score": 100,
+      "strategy": "CONTRARIAN",
+      "exit_reason": "",
+      "holding_minutes": 0,
+      "entry_time": "2026-01-30T12:18:02.078982",
+      "exit_time": ""
+    },
+    {
+      "trade_id": "HA20260130_122639",
+      "symbol": "NIFTY03FEB26C26000",
+      "strike": 26000,
+      "option_type": "CE",
+      "entry_price": 24.5,
+      "exit_price": 0,
+      "quantity": 225,
+      "gross_pnl": 0,
+      "net_pnl": 0,
+      "charges": 0,
+      "accuracy_score": 100,
+      "strategy": "CONTRARIAN",
+      "exit_reason": "",
+      "holding_minutes": 0,
+      "entry_time": "2026-01-30T12:26:39.014476",
+      "exit_time": ""
+    },
+    {
+      "trade_id": "HA20260130_122931",
+      "symbol": "NIFTY03FEB26C25700",
+      "strike": 25700,
+      "option_type": "CE",
+      "entry_price": 66.4,
+      "exit_price": 0,
+      "quantity": 225,
+      "gross_pnl": 0,
+      "net_pnl": 0,
+      "charges": 0,
+      "accuracy_score": 100,
+      "strategy": "CONTRARIAN",
+      "exit_reason": "",
+      "holding_minutes": 0,
+      "entry_time": "2026-01-30T12:29:31.697658",
+      "exit_time": ""
+    }
+  ],
+  "performance": {
+    "total_trades": 0,
+    "winning_trades": 0,
+    "losing_trades": 0,
+    "total_gross_pnl": 0,
+    "total_charges": 0,
+    "total_net_pnl": 0,
+    "win_rate": 0,
+    "avg_accuracy_score": 0,
+    "avg_holding_time_minutes": 0,
+    "current_nifty": 25312.75,
+    "profit_factor": 0
+  }
+}

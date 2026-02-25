@@ -1,0 +1,85 @@
+{
+  "timestamp": "2025-12-22T15:38:55.836716",
+  "capital": 145466.748204482,
+  "positions": [
+    {
+      "trade_id": "HA20251222_115137",
+      "symbol": "NIFTY23DEC25C26200",
+      "strike": 26200,
+      "option_type": "CE",
+      "entry_price": 32.4,
+      "quantity": 225,
+      "capital_invested": 7310.0,
+      "entry_time": "2025-12-22T11:51:37.875601",
+      "strategy": "CONTRARIAN",
+      "accuracy_score": 100,
+      "reasons": [
+        "Good OI: 17,380,875",
+        "✅ OPTIMAL premium: ₹32.40 (77.8% win rate)",
+        "Perfect trend alignment: STRONG_BULLISH",
+        "Near-ATM (58 pts)",
+        "Clear uptrend",
+        "Technical: 15MIN_NEUTRAL, 5min_RSI_BULLISH",
+        "✅ VERY_HIGH volume (188,216,400)",
+        "Δ:0.50"
+      ],
+      "patterns": [],
+      "stop_loss": 27.54,
+      "stop_loss_pct": 0.15,
+      "target": 48.599999999999994,
+      "target_pct": 0.5,
+      "token": "57020",
+      "nifty_at_entry": 26142.25,
+      "oi": 17380875,
+      "volume": 188216400,
+      "broker_charges": 20,
+      "atr": 6.521428571427999,
+      "volatility": "LOW"
+    },
+    {
+      "trade_id": "HA20251222_115711",
+      "symbol": "NIFTY23DEC25C26100",
+      "strike": 26100,
+      "option_type": "CE",
+      "entry_price": 81.35,
+      "quantity": 225,
+      "capital_invested": 18323.75,
+      "entry_time": "2025-12-22T11:57:11.188349",
+      "strategy": "CONTRARIAN",
+      "accuracy_score": 100,
+      "reasons": [
+        "Good OI: 15,929,100",
+        "⚠️ Expensive: ₹81.35 (Moderate Trend)",
+        "Good trend alignment: BULLISH",
+        "✅ ATM (39 pts)",
+        "Clear uptrend",
+        "Technical: 15MIN_NEUTRAL, 5min_RSI_BULLISH",
+        "Stoch: BULLISH crossover",
+        "Candlestick: BULLISH_ENGULFING",
+        "✅ VERY_HIGH volume (242,333,250)",
+        "Δ:0.50"
+      ],
+      "patterns": [
+        "BULLISH_ENGULFING"
+      ],
+      "stop_loss": 69.1475,
+      "stop_loss_pct": 0.15,
+      "target": 122.02499999999999,
+      "target_pct": 0.5,
+      "token": "57011",
+      "nifty_at_entry": 26139.1,
+      "oi": 15929100,
+      "volume": 242333250,
+      "broker_charges": 20,
+      "atr": 6.724999999999584,
+      "volatility": "LOW"
+    }
+  ],
+  "position_count": 2,
+  "metadata": {
+    "last_nifty_price": 26139.5,
+    "trade_count": 4,
+    "session_date": "2025-12-22"
+  },
+  "version": "1.0"
+}

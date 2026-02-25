@@ -1,0 +1,85 @@
+{
+  "start_time": "2025-11-07T15:17:32.472068",
+  "last_update": "2025-11-07T15:17:32.472068",
+  "initial_capital": 100000,
+  "current_capital": 146310.0,
+  "broker_charges_per_trade": 20,
+  "min_accuracy_score": 95,
+  "target_trades_per_day": "1-10",
+  "focus": "High Accuracy Quality Trades",
+  "total_gross_pnl": 46950.00000000001,
+  "total_charges": 640,
+  "total_net_pnl": 46310.00000000001,
+  "open_positions": 0,
+  "positions": [],
+  "recent_trades": [
+    {
+      "trade_id": "HA20251107_143822",
+      "symbol": "NIFTY11NOV25P25300",
+      "gross_pnl": 1064.999999999999,
+      "net_pnl": 1024.999999999999,
+      "charges": 40,
+      "accuracy_score": 100,
+      "exit_reason": "IMMEDIATE_PROFIT_BOOK",
+      "holding_minutes": 7.266851399999999,
+      "exit_time": "2025-11-07T14:45:38.161509"
+    },
+    {
+      "trade_id": "HA20251107_144336",
+      "symbol": "NIFTY11NOV25P25300",
+      "gross_pnl": 1020.0000000000007,
+      "net_pnl": 980.0000000000007,
+      "charges": 40,
+      "accuracy_score": 100,
+      "exit_reason": "IMMEDIATE_PROFIT_BOOK",
+      "holding_minutes": 7.797515866666667,
+      "exit_time": "2025-11-07T14:51:24.697789"
+    },
+    {
+      "trade_id": "HA20251107_144848",
+      "symbol": "NIFTY11NOV25P25300",
+      "gross_pnl": 1019.9999999999995,
+      "net_pnl": 979.9999999999995,
+      "charges": 40,
+      "accuracy_score": 100,
+      "exit_reason": "IMMEDIATE_PROFIT_BOOK",
+      "holding_minutes": 9.8801625,
+      "exit_time": "2025-11-07T14:58:41.251722"
+    },
+    {
+      "trade_id": "HA20251107_145401",
+      "symbol": "NIFTY11NOV25P25300",
+      "gross_pnl": -1394.9999999999995,
+      "net_pnl": -1434.9999999999995,
+      "charges": 40,
+      "accuracy_score": 100,
+      "exit_reason": "END_OF_DAY",
+      "holding_minutes": 23.50943735,
+      "exit_time": "2025-11-07T15:17:32.338770"
+    },
+    {
+      "trade_id": "HA20251107_145916",
+      "symbol": "NIFTY11NOV25P25300",
+      "gross_pnl": -1634.9999999999998,
+      "net_pnl": -1674.9999999999998,
+      "charges": 40,
+      "accuracy_score": 100,
+      "exit_reason": "END_OF_DAY",
+      "holding_minutes": 18.272725916666666,
+      "exit_time": "2025-11-07T15:17:32.471070"
+    }
+  ],
+  "performance": {
+    "total_trades": 16,
+    "winning_trades": 12,
+    "losing_trades": 4,
+    "total_gross_pnl": 46950.00000000001,
+    "total_charges": 640,
+    "total_net_pnl": 46310.00000000001,
+    "win_rate": 75.0,
+    "avg_accuracy_score": 100.0,
+    "avg_holding_time_minutes": 26.282762560416668,
+    "current_nifty": 25537.15,
+    "profit_factor": 73.35937500000001
+  }
+}

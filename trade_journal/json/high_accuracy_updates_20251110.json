@@ -1,0 +1,85 @@
+{
+  "start_time": "2025-11-10T15:15:22.023977",
+  "last_update": "2025-11-10T15:15:22.023977",
+  "initial_capital": 100000,
+  "current_capital": 158815.0,
+  "broker_charges_per_trade": 20,
+  "min_accuracy_score": 95,
+  "target_trades_per_day": "1-10",
+  "focus": "High Accuracy Quality Trades",
+  "total_gross_pnl": 12945.0,
+  "total_charges": 440,
+  "total_net_pnl": 12505.0,
+  "open_positions": 0,
+  "positions": [],
+  "recent_trades": [
+    {
+      "trade_id": "HA20251110_115847",
+      "symbol": "NIFTY11NOV25P25500",
+      "gross_pnl": 569.9999999999995,
+      "net_pnl": 529.9999999999995,
+      "charges": 40,
+      "accuracy_score": 100,
+      "exit_reason": "TIME_EXIT",
+      "holding_minutes": 120.42504145,
+      "exit_time": "2025-11-10T13:59:12.913699"
+    },
+    {
+      "trade_id": "HA20251110_121941",
+      "symbol": "NIFTY11NOV25P25500",
+      "gross_pnl": -975.0,
+      "net_pnl": -1015.0,
+      "charges": 40,
+      "accuracy_score": 100,
+      "exit_reason": "TIME_EXIT",
+      "holding_minutes": 120.023194,
+      "exit_time": "2025-11-10T14:19:42.875801"
+    },
+    {
+      "trade_id": "HA20251110_135356",
+      "symbol": "NIFTY11NOV25C25500",
+      "gross_pnl": -1920.0000000000018,
+      "net_pnl": -1960.0000000000018,
+      "charges": 40,
+      "accuracy_score": 100,
+      "exit_reason": "END_OF_DAY",
+      "holding_minutes": 81.39677731666667,
+      "exit_time": "2025-11-10T15:15:20.237104"
+    },
+    {
+      "trade_id": "HA20251110_135913",
+      "symbol": "NIFTY11NOV25C25500",
+      "gross_pnl": 750.0,
+      "net_pnl": 710.0,
+      "charges": 40,
+      "accuracy_score": 100,
+      "exit_reason": "END_OF_DAY",
+      "holding_minutes": 76.1239741,
+      "exit_time": "2025-11-10T15:15:21.142510"
+    },
+    {
+      "trade_id": "HA20251110_142018",
+      "symbol": "NIFTY11NOV25C25550",
+      "gross_pnl": -4410.000000000001,
+      "net_pnl": -4450.000000000001,
+      "charges": 40,
+      "accuracy_score": 100,
+      "exit_reason": "END_OF_DAY",
+      "holding_minutes": 55.05084375,
+      "exit_time": "2025-11-10T15:15:22.023977"
+    }
+  ],
+  "performance": {
+    "total_trades": 11,
+    "winning_trades": 7,
+    "losing_trades": 4,
+    "total_gross_pnl": 12945.0,
+    "total_charges": 440,
+    "total_net_pnl": 12505.0,
+    "win_rate": 63.63636363636363,
+    "avg_accuracy_score": 100.0,
+    "avg_holding_time_minutes": 86.3858326969697,
+    "current_nifty": 25608.95,
+    "profit_factor": 29.420454545454547
+  }
+}

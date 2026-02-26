@@ -2,12 +2,9 @@ name: Auto Trading Bot
 
 on:
   schedule:
-    # Run every 5 minutes during market hours (9:15 AM - 3:30 PM IST)
-    # IST = UTC+5:30, so 9:15 AM IST = 3:45 AM UTC
-    # Market hours in UTC: 3:45 AM - 10:00 AM
-    - cron: '45,50,55 3 * * 1-5'      # 9:15-9:55 AM IST
-    - cron: '0,5,10,15,20,25,30,35,40,45,50,55 4-9 * * 1-5'  # 10:00 AM - 3:00 PM IST
-    - cron: '0 10 * * 1-5'            # 3:30 PM IST
+    # Run ONCE at market open (9:15 AM IST = 3:45 AM UTC)
+    # This will run the FULL trading session from 9:15 AM to 3:30 PM
+    - cron: '45 3 * * 1-5'  # Monday to Friday at 9:15 AM IST
   
   workflow_dispatch:  # Allow manual trigger
 
@@ -82,9 +79,10 @@ jobs:
     - name: 🚀 Run trading bot
       if: steps.market_check.outputs.is_open == 'true'
       run: |
-        echo "🎯 Starting high accuracy trading algorithm..."
+        echo "🎯 Starting FULL trading session (9:15 AM - 3:30 PM)..."
+        echo "📊 This will run continuously until market close"
         python run_github_actions.py
-      timeout-minutes: 10
+      timeout-minutes: 400  # 6+ hours for full session
     
     - name: 📊 Upload trade results
       if: always()
@@ -151,7 +149,7 @@ jobs:
       if: always()
       run: |
         echo "================================"
-        echo "📊 TRADING SESSION SUMMARY"
+        echo "📊 FULL SESSION SUMMARY"
         echo "================================"
         
         # Find today's trade file
@@ -160,15 +158,22 @@ jobs:
         
         if [ -f "$trade_file" ]; then
           trade_count=$(tail -n +2 "$trade_file" | wc -l)
-          echo "✅ Trades executed today: $trade_count"
+          echo "✅ Total trades executed: $trade_count"
           
           if [ $trade_count -gt 0 ]; then
             echo ""
-            echo "Recent trades:"
-            tail -n 5 "$trade_file"
+            echo "📋 All trades:"
+            cat "$trade_file"
           fi
         else
-          echo "ℹ️ No trades executed yet today"
+          echo "ℹ️ No trades executed today"
+        fi
+        
+        # Show capital status
+        if [ -f "trade_journal/json/capital_persistence.json" ]; then
+          echo ""
+          echo "💰 Capital Status:"
+          cat trade_journal/json/capital_persistence.json
         fi
         
         echo ""

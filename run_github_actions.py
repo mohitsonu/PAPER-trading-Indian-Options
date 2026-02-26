@@ -72,6 +72,9 @@ def main():
     capital = 100000
     algo = HighAccuracyAlgo(initial_capital=capital, strategy_mode='CURRENT')
     
+    # Check if this is the first run of the day (around market open)
+    is_market_open_time = current_time.hour == 9 and current_time.minute <= 20
+    
     try:
         # Login
         print("🔐 Logging in...")
@@ -81,6 +84,14 @@ def main():
         
         print("✅ Login successful!")
         print()
+        
+        # Send session start notification (only at market open)
+        if is_market_open_time and telegram:
+            try:
+                telegram.send_session_start(algo.current_capital)
+                print("📱 Trading session start notification sent to Telegram")
+            except Exception as e:
+                print(f"⚠️ Session start notification failed: {e}")
         
         # Run single cycle
         print("📊 Fetching market data...")
@@ -132,14 +143,17 @@ def main():
                         # Send Telegram notification
                         if telegram:
                             try:
-                                telegram.send_trade_signal(
-                                    symbol=best_opp['symbol'],
-                                    action="BUY",
-                                    price=best_opp['ltp'],
-                                    score=best_opp['score_data']['score'],
-                                    strategy="CONTRARIAN",
-                                    reason=f"High accuracy opportunity (Score: {best_opp['score_data']['score']}/100)"
-                                )
+                                trade_data = {
+                                    'symbol': best_opp['symbol'],
+                                    'strike': best_opp.get('strike', 'N/A'),
+                                    'option_type': best_opp.get('option_type', 'N/A'),
+                                    'entry_price': best_opp['ltp'],
+                                    'quantity': best_opp.get('quantity', 15),
+                                    'strategy': 'CONTRARIAN',
+                                    'reason': f"High accuracy opportunity (Score: {best_opp['score_data']['score']}/100)"
+                                }
+                                telegram.send_entry_signal(trade_data)
+                                print("📱 Entry signal sent to Telegram")
                             except Exception as e:
                                 print(f"⚠️ Telegram notification failed: {e}")
                     else:
@@ -180,15 +194,31 @@ def main():
             total_pnl = sum(t.get('pnl', 0) for t in algo.trade_history)
             print(f"💵 Total P&L: ₹{total_pnl:+,.2f}")
             
-            # Send daily summary via Telegram at market close
+            # Send daily summary via Telegram at market close (3:25 PM onwards)
             if telegram and current_time.hour >= 15 and current_time.minute >= 25:
                 try:
-                    telegram.send_daily_summary(
-                        total_trades=len(algo.trade_history),
-                        winning_trades=len([t for t in algo.trade_history if t.get('pnl', 0) > 0]),
-                        total_pnl=total_pnl,
-                        capital=algo.current_capital
-                    )
+                    wins = len([t for t in algo.trade_history if t.get('pnl', 0) > 0])
+                    losses = len([t for t in algo.trade_history if t.get('pnl', 0) <= 0])
+                    win_rate = (wins / len(algo.trade_history) * 100) if algo.trade_history else 0
+                    
+                    # Find today's CSV file
+                    today = datetime.now().strftime('%Y%m%d')
+                    csv_file = f"high_accuracy_trades_{today}.csv"
+                    
+                    summary_data = {
+                        'starting_capital': capital,
+                        'ending_capital': algo.current_capital,
+                        'net_pnl': total_pnl,
+                        'net_pnl_pct': (total_pnl / capital * 100),
+                        'total_trades': len(algo.trade_history),
+                        'win_rate': win_rate,
+                        'wins': wins,
+                        'losses': losses,
+                        'csv_file': csv_file if os.path.exists(csv_file) else ''
+                    }
+                    
+                    telegram.send_daily_summary(summary_data)
+                    print("📱 Daily summary sent to Telegram")
                 except Exception as e:
                     print(f"⚠️ Telegram summary failed: {e}")
         

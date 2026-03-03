@@ -2,9 +2,9 @@ name: Auto Trading Bot
 
 on:
   schedule:
-    # Run ONCE at market open (9:15 AM IST = 3:45 AM UTC)
-    # This will run the FULL trading session from 9:15 AM to 3:30 PM
-    - cron: '45 3 * * 1-5'  # Monday to Friday at 9:15 AM IST
+    # Run at 9:00 AM IST (3:30 AM UTC) to account for GitHub Actions delays
+    # Even with 15-30 min delay, will start before 9:30 AM
+    - cron: '30 3 * * 1-5'  # Monday to Friday at 9:00 AM IST
   
   workflow_dispatch:  # Allow manual trigger
 

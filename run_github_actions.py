@@ -38,6 +38,23 @@ def main():
     print("✅ Market is open - Starting FULL trading session...")
     print()
     
+    # Wait until 9:15 AM if we started early (due to GitHub Actions scheduling)
+    now = datetime.now()
+    market_open_time = now.replace(hour=9, minute=15, second=0, microsecond=0)
+    
+    if now < market_open_time:
+        wait_seconds = (market_open_time - now).total_seconds()
+        wait_minutes = int(wait_seconds / 60)
+        print(f"⏰ Market opens at 9:15 AM. Waiting {wait_minutes} minutes...")
+        print(f"   Current time: {now.strftime('%H:%M:%S')}")
+        print(f"   Will start at: 9:15:00")
+        
+        import time
+        time.sleep(wait_seconds)
+        
+        print(f"✅ Market open! Starting now...")
+        print()
+    
     # Initialize algorithm with CURRENT strategy (same as local)
     capital = 100000
     strategy_mode = "CURRENT"  # High accuracy mode (score >= 90)

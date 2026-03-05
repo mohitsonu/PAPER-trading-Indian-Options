@@ -1,0 +1,42 @@
+❓ WHY NO CSV FILES IN LOCAL FOLDER?
+═══════════════════════════════════════════════════════════
+
+ANSWER: GitHub Actions runs on GITHUB'S CLOUD, not your laptop!
+
+┌─────────────────────────────────────────────────────────┐
+│  YOUR LAPTOP (Local)        GITHUB CLOUD (Remote)       │
+│  ─────────────────          ──────────────────          │
+│  ❌ No CSV files            ✅ CSV files HERE           │
+│  ❌ No updates              ✅ Trading happens HERE     │
+│  ❌ Report not updated      ✅ Report generated HERE    │
+└─────────────────────────────────────────────────────────┘
+
+═══════════════════════════════════════════════════════════
+
+✅ HOW TO SEE FILES:
+
+1. TELEGRAM (BEST - Real-time)
+   → You're already getting notifications!
+   → At 3:30 PM, you'll get CSV file attached
+
+2. GITHUB ACTIONS ARTIFACTS
+   → Go to: github.com/mohitsonu/PAPER-trading/actions
+   → Click today's run
+   → Download artifacts
+
+3. PULL FROM GITHUB (After 3:30 PM)
+   → Run: git pull origin main
+   → Files will appear in trade_journal/csv/
+
+═══════════════════════════════════════════════════════════
+
+📱 YOU'RE ALREADY GETTING EVERYTHING ON TELEGRAM!
+   → Session start ✅
+   → Entry signals ✅
+   → Exit signals ✅
+   → Daily summary with CSV (at 3:30 PM) ✅
+
+═══════════════════════════════════════════════════════════
+
+💡 NO ACTION NEEDED - Just monitor Telegram!
+

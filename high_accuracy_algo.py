@@ -69,8 +69,8 @@ load_dotenv()
 
 class HighAccuracyAlgo:
     def __init__(self, initial_capital=100000, strategy_mode='CURRENT'):
-        self.api = NorenApi(host='https://api.shoonya.com/NorenWClientTP/', 
-                           websocket='wss://api.shoonya.com/NorenWSTP/')
+        self.api = NorenApi(host='https://api.shoonya.com/NorenWClientAPI/', 
+                           websocket='wss://api.shoonya.com/NorenWSAPI/')
         
         # Credentials
         self.user_id = os.getenv('SHOONYA_USER_ID')

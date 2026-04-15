@@ -1,12 +1,11 @@
 name: Auto Trading Bot
 
 on:
-  schedule:
-    # Run at 8:45 AM IST (3:15 AM UTC) to account for GitHub Actions delays
-    # With delays, should start around 9:00-9:15 AM
-    - cron: '15 3 * * 1-5'  # Monday to Friday at 8:45 AM IST
+  # Disabled - Running locally only (Shoonya requires whitelisted IP)
+  # schedule:
+  #   - cron: '15 3 * * 1-5'
   
-  workflow_dispatch:  # Allow manual trigger
+  workflow_dispatch:  # Keep manual trigger only if needed
 
 env:
   TZ: Asia/Kolkata  # Set timezone to IST
